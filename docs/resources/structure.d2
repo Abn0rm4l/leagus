@@ -1,0 +1,72 @@
+league -> season -> session -> round -> match: contains
+league -> participant : includes
+season -> participant : includes
+session -> participant : includes
+round -> participant : includes
+match -> participant : includes
+match -> venue : "hosted at"
+
+league: {
+  shape: sql_table
+  id
+  name
+  seasons
+  participants
+  }
+
+season: {
+  shape: sql_table
+  id
+  start date
+  end date
+  scoring system
+  sessions
+  participants
+}
+
+session: {
+  shape: sql_table
+  id
+  rounds
+  date
+  participants
+  }
+
+round : {
+  shape: sql_table
+  id
+  name/label
+  matches
+  match making strategy
+  participants
+}
+
+match: {
+  shape: sql_table
+  id
+  score
+  venue
+  participants
+}
+
+matchNote -- match
+
+matchNote: |md
+  There could be differnt kinds of matches with differnt ways to score.
+| {
+  shape: page
+  style.stroke-dash: 5
+  style.opacity: 0.9
+}
+
+participant: {
+shape: sql_table
+id
+name
+}
+
+venue: {
+shape: sql_table
+id
+name/label
+}

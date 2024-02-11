@@ -1,0 +1,91 @@
+#+title: Project Design Document
+#+options: h:1 num:nil toc:nil
+
+* Overview
+The goal of the project is to build software for the purpose of managing and tracking various types of leagues.
+
+* Design
+** Domain Model
+The basic data model could be as follows.
+
+#+caption: Leagus Structure
+#+attr_latex: scale=0.75
+#+label: fig:legus_structure
+#+begin_src d2 :file resources/structure.png :tangle resources/structure.d2
+  league -> season -> session -> round -> match: contains
+  league -> participant : includes
+  season -> participant : includes
+  session -> participant : includes
+  round -> participant : includes
+  match -> participant : includes
+  match -> venue : "hosted at"
+
+  league: {
+    shape: sql_table
+    id
+    name
+    seasons
+    participants
+    }
+
+  season: {
+    shape: sql_table
+    id
+    start date
+    end date
+    scoring system
+    sessions
+    participants
+  }
+
+  session: {
+    shape: sql_table
+    id
+    rounds
+    date
+    participants
+    }
+
+  round : {
+    shape: sql_table
+    id
+    name/label
+    matches
+    match making strategy
+    participants
+  }
+
+  match: {
+    shape: sql_table
+    id
+    score
+    venue
+    participants
+  }
+
+  matchNote -- match
+
+  matchNote: |md
+    There could be differnt kinds of matches with differnt ways to score.
+  | {
+    shape: page
+    style.stroke-dash: 5
+    style.opacity: 0.9
+  }
+
+  participant: {
+  shape: sql_table
+  id
+  name
+  }
+
+  venue: {
+  shape: sql_table
+  id
+  name/label
+  }
+#+end_src
+
+#+attr_html: :width 900em
+#+RESULTS: fig:legus_structure
+[[file:resources/structure.png]]
