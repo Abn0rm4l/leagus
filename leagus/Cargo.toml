@@ -1,12 +1,14 @@
 [package]
-name = "core"
+name = "leagus"
 version = "0.1.0"
 edition = "2021"
+description = "The Leagus league management tool"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 time = "0.3.34"
+clap = { version = "4.5.0", features = ["derive", "color", "cargo"] }
 
 [dependencies.uuid]
 version = "1.7.0"

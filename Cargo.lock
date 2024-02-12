@@ -97,26 +97,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
-name = "cli"
-version = "0.1.0"
-dependencies = [
- "clap",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
-
-[[package]]
-name = "core"
-version = "0.1.0"
-dependencies = [
- "pretty_assertions",
- "time",
- "uuid",
-]
 
 [[package]]
 name = "deranged"
@@ -149,6 +133,16 @@ name = "heck"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
+
+[[package]]
+name = "leagus"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "pretty_assertions",
+ "time",
+ "uuid",
+]
 
 [[package]]
 name = "libc"

@@ -1,5 +1,6 @@
 use clap::command;
 
+/// The CLI interface for Leagus
 fn main() {
     let matches = command!() // requires `cargo` feature
         .propagate_version(true)
@@ -19,6 +20,7 @@ fn main() {
 /// Module for the league commands
 mod leagues {
     use clap::{arg, ArgMatches, Command};
+    use leagus::models::League;
 
     pub const CMD_NAME: &str = "leagues";
 
@@ -53,7 +55,9 @@ mod leagues {
 
     fn create(matches: &ArgMatches) {
         let name = matches.get_one::<String>("name").expect("required");
-        println!("Created new league: \"{}\"", name)
+        println!("Created new league: \"{}\"", name);
+        League::new(name.to_string());
+        //TODO: Store via the persistence layer
     }
 
     fn list(_matches: &ArgMatches) {

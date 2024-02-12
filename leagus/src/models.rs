@@ -9,6 +9,13 @@ pub struct League {
     // pub participants: Vec<Participant>,
 }
 
+impl League {
+    /// Creates a new [`League`].
+    pub fn new(name: String) -> League {
+        League { name, id: Uuid::new_v4() }
+    }
+}
+
 /// A season of a league.
 ///
 /// A season represents the scoring periods of a league.
