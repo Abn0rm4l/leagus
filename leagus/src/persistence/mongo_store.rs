@@ -1,4 +1,3 @@
-
 use mongodb::sync::{Client, Collection};
 
 use crate::models::League;
@@ -11,12 +10,10 @@ pub struct MongoStore {
 
 impl MongoStore {
     pub fn new() -> MongoStore {
-        let client_result = Client::with_uri_str("mongodb://root:example@127.0.0.1:27017");
+        let result = Client::with_uri_str("mongodb://root:example@127.0.0.1:27017");
 
-        match client_result {
-            Ok(client) => MongoStore {
-                client
-            },
+        match result {
+            Ok(client) => MongoStore { client },
             Err(error) => panic!("Problem opening a connection, {:?}", error),
         }
     }
@@ -24,8 +21,7 @@ impl MongoStore {
 
 impl WriteableStore for MongoStore {
     fn create_league(&mut self, league: League) -> () {
-        let db = self.client.database("leagus");
-        let collection = db.collection::<League>("leagues");
+        let collection = league_collection(self);
 
         // TODO: Make sure we use the League.id as the mongodb id
         let _ = collection.insert_one(league, None);
@@ -36,23 +32,31 @@ impl WriteableStore for MongoStore {
     }
 
     fn list_leagues(&self) -> Vec<League> {
-        // let db = self.client.database("leagus");
-        // let collection = db.collection::<League>("leagues");
         let collection = league_collection(self);
-        let cursor = collection.find(None, None).unwrap();
+        let result = collection.find(None, None);
 
-        cursor.map(|x| x.unwrap()).collect()
+        match result {
+            Ok(cursor) => cursor
+                .filter(|x| x.is_ok()) // Errors here are probably serialization related
+                .map(|x| x.unwrap())
+                .collect(),
+            Err(error) => {
+                println!("Error finding leagues, {:?}", error);
+                Vec::new()
+            }
+        }
     }
 }
 
 impl Drop for MongoStore {
     fn drop(&mut self) {
+        // To cleanly close our connections we need to shutdown the sync client.
         let client = self.client.clone();
         client.shutdown();
     }
 }
 
-// Return a handle to the MongoDB League Collection
+/// Return a handle to the MongoDB League Collection
 fn league_collection(store: &MongoStore) -> Collection<League> {
     let db = store.client.database("leagus");
     db.collection::<League>("leagues")
