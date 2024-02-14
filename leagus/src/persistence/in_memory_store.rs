@@ -10,6 +10,14 @@ pub struct InMemoryStore {
     leagues: HashMap<Uuid, League>,
 }
 
+impl InMemoryStore {
+    pub fn new() -> InMemoryStore {
+        InMemoryStore {
+            leagues: HashMap::new(),
+        }
+    }
+}
+
 impl WriteableStore for InMemoryStore {
     fn create_league(&mut self, league: League) -> () {
         self.leagues.insert(league.id, league);
@@ -18,8 +26,12 @@ impl WriteableStore for InMemoryStore {
     fn get_league(&self, league_id: &uuid::Uuid) -> Option<League> {
         match self.leagues.get(league_id) {
             Some(league) => Some(league.clone()),
-            None => None
+            None => None,
         }
+    }
+
+    fn list_leagues(&self) -> Vec<League> {
+        todo!()
     }
 }
 
@@ -32,7 +44,7 @@ mod tests {
     #[test]
     fn get_after_create() {
         let mut store = InMemoryStore {
-            leagues : HashMap::new()
+            leagues: HashMap::new(),
         };
 
         let id = Uuid::new_v4();

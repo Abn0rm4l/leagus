@@ -21,6 +21,8 @@ fn main() {
 mod leagues {
     use clap::{arg, ArgMatches, Command};
     use leagus::models::League;
+    use leagus::persistence::WriteableStore;
+    use leagus::persistence::mongo_store::MongoStore;
 
     pub const CMD_NAME: &str = "leagues";
 
@@ -56,18 +58,26 @@ mod leagues {
     fn create(matches: &ArgMatches) {
         let name = matches.get_one::<String>("name").expect("required");
         println!("Created new league: \"{}\"", name);
-        League::new(name.to_string());
+        let league = League::new(name.to_string());
+
         //TODO: Store via the persistence layer
+        let mut store = MongoStore::new();
+        store.create_league(league);
     }
 
     fn list(_matches: &ArgMatches) {
-        println!("Listing existing leagues")
+        println!("Listing existing leagues");
+        let store = MongoStore::new();
+        let leagues = store.list_leagues();
+        for league in leagues {
+            println!("League: {:?}", league);
+        }
     }
 }
 
 /// Module for the participant commands
 mod participants {
-    use clap::{Command, arg, ArgMatches};
+    use clap::{arg, ArgMatches, Command};
 
     pub const CMD_NAME: &str = "participants";
 
@@ -76,12 +86,14 @@ mod participants {
             .about("Commands for managing participants")
             .subcommand_required(true)
             .subcommand(
-                Command::new("create").about("Create a new participants").arg(
-                    arg!(
-                        -n --name <NAME> "Name of new participants"
-                    )
+                Command::new("create")
+                    .about("Create a new participants")
+                    .arg(
+                        arg!(
+                            -n --name <NAME> "Name of new participants"
+                        )
                         .required(true),
-                ),
+                    ),
             )
             .subcommand(
                 Command::new("list")

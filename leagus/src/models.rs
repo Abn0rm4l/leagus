@@ -1,8 +1,9 @@
 use time::Date;
 use uuid::Uuid;
+use serde::{Serialize, Deserialize};
 
 /// A league.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct League {
     pub name: String,
     pub id: Uuid,
@@ -12,7 +13,10 @@ pub struct League {
 impl League {
     /// Creates a new [`League`].
     pub fn new(name: String) -> League {
-        League { name, id: Uuid::new_v4() }
+        League {
+            name,
+            id: Uuid::new_v4(),
+        }
     }
 }
 

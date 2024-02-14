@@ -9,6 +9,7 @@ description = "The Leagus league management tool"
 [dependencies]
 time = "0.3.34"
 clap = { version = "4.5.0", features = ["derive", "color", "cargo"] }
+serde = "1.0.196"
 
 [dependencies.uuid]
 version = "1.7.0"
@@ -17,6 +18,10 @@ features = [
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
     "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
 ]
+
+[dependencies.mongodb]
+version = "2.8.1"
+features = ["tokio-sync"]
 
 [dev-dependencies]
 pretty_assertions = "1"
