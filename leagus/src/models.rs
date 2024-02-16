@@ -5,17 +5,18 @@ use serde::{Serialize, Deserialize};
 /// A league.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct League {
-    pub name: String,
+    // The mongodb id field is named "_id"
+    #[serde(rename = "_id")]
     pub id: Uuid,
-    // pub participants: Vec<Participant>,
+    pub name: String,
 }
 
 impl League {
     /// Creates a new [`League`].
     pub fn new(name: String) -> League {
         League {
-            name,
             id: Uuid::new_v4(),
+            name,
         }
     }
 }
