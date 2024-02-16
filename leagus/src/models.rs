@@ -74,9 +74,9 @@ mod tests {
         let uuid = Uuid::new_v4();
 
         let league1 = League {
-            name: String::from("Epic"),
             id: uuid,
-            // participants,
+            name: String::from("Epic"),
+            description: "Tim's your uncle".to_string()
         };
 
         let participant = Participant {
@@ -85,9 +85,9 @@ mod tests {
         let participants = vec![participant];
 
         let league2 = League {
-            name: String::from("Epic"),
             id: uuid,
-            // participants,
+            name: String::from("Epic"),
+            description: "Tim's your uncle".to_string()
         };
 
         assert_eq!(league1, league2);

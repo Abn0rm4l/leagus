@@ -50,8 +50,9 @@ mod tests {
         let id = Uuid::new_v4();
 
         let league = League {
-            name: String::from("Social League"),
             id,
+            name: String::from("Social League"),
+            description: "Such fun".to_string(),
         };
 
         store.create_league(league);
