@@ -36,7 +36,7 @@ impl WriteableStore for MongoStore {
             .build();
 
         let index = IndexModel::builder()
-            .keys(doc! {"name": -1})
+            .keys(doc! {"name": 1})
             .options(opts)
             .build();
 

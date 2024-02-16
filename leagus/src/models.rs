@@ -8,15 +8,20 @@ pub struct League {
     // The mongodb id field is named "_id"
     #[serde(rename = "_id")]
     pub id: Uuid,
+
     pub name: String,
+
+    #[serde(default)]
+    pub description: String,
 }
 
 impl League {
     /// Creates a new [`League`].
-    pub fn new(name: String) -> League {
+    pub fn new(name: &str, description: &str) -> League {
         League {
             id: Uuid::new_v4(),
-            name,
+            name: String::from(name),
+            description: String::from(description),
         }
     }
 }
