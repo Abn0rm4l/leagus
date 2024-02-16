@@ -41,6 +41,8 @@ impl WriteableStore for MongoStore {
             .build();
 
         let _ = collection.create_index(index, None);
+        // TODO: Return some kind of error when failing to insert a document,
+        // for example; when inserting a duplicate entry.
         let _ = collection.insert_one(league, None);
     }
 
