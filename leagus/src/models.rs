@@ -1,18 +1,26 @@
-use time::Date;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use serde::{Serialize, Deserialize};
+
+// Some alaises to make it easier to read what ID is expected since they will
+// all be Uuids. Might have to figure out a nicer way to do this later.
+pub type LeagueId = Uuid;
+pub type SeasonId = Uuid;
 
 /// A league.
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct League {
     // The mongodb id field is named "_id"
     #[serde(rename = "_id")]
-    pub id: Uuid,
+    pub id: LeagueId,
 
     pub name: String,
 
     #[serde(default)]
     pub description: String,
+
+    #[serde(default)]
+    pub seasons: Vec<SeasonId>,
 }
 
 impl League {
@@ -22,6 +30,7 @@ impl League {
             id: Uuid::new_v4(),
             name: String::from(name),
             description: String::from(description),
+            seasons: Vec::new(),
         }
     }
 }
@@ -29,10 +38,13 @@ impl League {
 /// A season of a league.
 ///
 /// A season represents the scoring periods of a league.
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Season {
-    start: Date,
-    end: Date,
-    sessions: Vec<Session>,
+    #[serde(rename = "_id")]
+    pub id: SeasonId,
+    pub league_id: LeagueId,
+    pub start: DateTime<Utc>,
+    pub end: DateTime<Utc>,
 }
 
 /// A session of a season.
@@ -40,18 +52,18 @@ pub struct Season {
 /// Each season can include one or more sessions. Sessions can be thought of
 /// like "match days".
 pub struct Session {
-    date: Date,
-    rounds: Vec<Round>,
+    // date: Date,
+    // rounds: Vec<Round>,
 }
 
 pub struct Round {
-    matches: Vec<Match>,
-    participants: Vec<Participant>,
+    // matches: Vec<Match>,
+    // participants: Vec<Participant>,
 }
 
 pub struct Match {
-    venue: String,
-    participants: Vec<Participant>,
+    // venue: String,
+    // participants: Vec<Participant>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -67,27 +79,20 @@ mod tests {
 
     #[test]
     fn league_eqls() {
-        let participant = Participant {
-            name: String::from("Bob"),
-        };
-        let participants = vec![participant];
         let uuid = Uuid::new_v4();
 
         let league1 = League {
             id: uuid,
             name: String::from("Epic"),
-            description: "Tim's your uncle".to_string()
+            description: "Tim's your uncle".to_string(),
+            seasons: Vec::new(),
         };
-
-        let participant = Participant {
-            name: String::from("Bob"),
-        };
-        let participants = vec![participant];
 
         let league2 = League {
             id: uuid,
             name: String::from("Epic"),
-            description: "Tim's your uncle".to_string()
+            description: "Tim's your uncle".to_string(),
+            seasons: Vec::new(),
         };
 
         assert_eq!(league1, league2);

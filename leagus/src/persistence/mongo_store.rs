@@ -1,6 +1,6 @@
 use mongodb::{sync::{Client, Collection}, bson::doc, options::IndexOptions, IndexModel};
 
-use crate::models::League;
+use crate::models::{League, Season};
 
 use super::WriteableStore;
 
@@ -9,12 +9,14 @@ const DB_NAME: &str = "leagus";
 
 // Name of the Leagues Collection
 const COLLECTION_LEAGUES: &str = "leagues";
+const COLLECTION_SEASONS: &str = "seasons";
 
 pub struct MongoStore {
     client: Client,
 }
 
 impl MongoStore {
+    /// Create a new MongoDB-backed store.
     pub fn new() -> MongoStore {
         let result = Client::with_uri_str("mongodb://root:example@127.0.0.1:27017");
 
@@ -23,35 +25,57 @@ impl MongoStore {
             Err(error) => panic!("Problem opening a connection, {:?}", error),
         }
     }
-}
 
-impl WriteableStore for MongoStore {
-    fn create_league(&mut self, league: League) -> () {
-        let collection = league_collection(self);
+    /// Bootstrap the MongoDB databases and collections
+    pub fn bootstrap(&mut self) {
+        self.bootstrap_leagues();
+        self.bootstrap_seasons();
+    }
 
-        // Make sure the name is unique
-        // TODO: Move this into a db setup/bootstrap function
+    /// Bootstrap the leagues collection
+    fn bootstrap_leagues(&mut self) {
+        let collection = leagues_collection(self);
+
         let opts = IndexOptions::builder()
             .unique(true)
             .build();
 
+        // Add an index for name to easily query based on name
         let index = IndexModel::builder()
             .keys(doc! {"name": 1})
             .options(opts)
             .build();
 
         let _ = collection.create_index(index, None);
+    }
+
+    /// Bootstrap the seasons collection
+    fn bootstrap_seasons(&mut self) {
+        let collection = seasons_collection(self);
+
+        let index = IndexModel::builder()
+            .keys(doc! {"league_id": 1})
+            .build();
+
+        let _ = collection.create_index(index, None);
+    }
+}
+
+impl WriteableStore for MongoStore {
+    fn create_league(&mut self, league: League) -> () {
+        let collection = leagues_collection(self);
+
         // TODO: Return some kind of error when failing to insert a document,
         // for example; when inserting a duplicate entry.
         let _ = collection.insert_one(league, None);
     }
 
-    fn get_league(&self, league_id: &uuid::Uuid) -> Option<League> {
+    fn get_league(&self, _league_id: &uuid::Uuid) -> Option<League> {
         todo!()
     }
 
     fn list_leagues(&self) -> Vec<League> {
-        let collection = league_collection(self);
+        let collection = leagues_collection(self);
         let result = collection.find(None, None);
 
         match result {
@@ -76,7 +100,13 @@ impl Drop for MongoStore {
 }
 
 /// Return a handle to the MongoDB League Collection
-fn league_collection(store: &MongoStore) -> Collection<League> {
+fn leagues_collection(store: &MongoStore) -> Collection<League> {
     let db = store.client.database(DB_NAME);
     db.collection::<League>(COLLECTION_LEAGUES)
+}
+
+/// Return a handle to the MongoDB Seasons Collection
+fn seasons_collection(store: &MongoStore) -> Collection<Season> {
+    let db = store.client.database(DB_NAME);
+    db.collection::<Season>(COLLECTION_SEASONS)
 }

@@ -53,6 +53,7 @@ mod tests {
             id,
             name: String::from("Social League"),
             description: "Such fun".to_string(),
+            seasons: Vec::new(),
         };
 
         store.create_league(league);
