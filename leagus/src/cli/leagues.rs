@@ -39,6 +39,9 @@ pub fn commands() -> Command {
                 .arg(arg!(
                     -e --end <DATE> "End date of new season"
                 ))
+                .arg(arg!(
+                    -n --name <NAME> "Name of the new season"
+                ))
                 .arg(
                     arg!(
                         -l --league <NAME> "Name of league to add the new season"
@@ -48,6 +51,7 @@ pub fn commands() -> Command {
         )
 }
 
+/// Delegate subcommands of the league command
 pub fn handle_subcommands(matches: &ArgMatches) {
     match matches.subcommand() {
         Some(("create", sub_matches)) => create(sub_matches),
@@ -57,6 +61,7 @@ pub fn handle_subcommands(matches: &ArgMatches) {
     }
 }
 
+/// Create a new league
 fn create(matches: &ArgMatches) {
     let name = matches.get_one::<String>("name").expect("required");
 
@@ -72,6 +77,7 @@ fn create(matches: &ArgMatches) {
     println!("Created new league: \"{}\"", name);
 }
 
+/// List all leagues
 fn list(_matches: &ArgMatches) {
     println!("Leagues:");
     let store = MongoStore::new();
@@ -81,8 +87,26 @@ fn list(_matches: &ArgMatches) {
     }
 }
 
+/// Add a new season to a league
 fn add_season(matches: &ArgMatches) {
     let league_name = matches.get_one::<String>("league").expect("required");
+
+    // TODO: handle bad dates with more grace
+    // TODO: be more flexible on date formats
+    let start = matches.get_one::<String>("start");
+    let start = match start {
+        Some(start) => start.parse::<DateTime<Utc>>().unwrap(),
+        None => Utc::now(),
+    };
+
+    let end = matches.get_one::<String>("end");
+    let end = match end {
+        Some(end) => end.parse::<DateTime<Utc>>().unwrap(),
+        None => start + TimeDelta::days(30),
+    };
+
+    let name = matches.get_one::<String>("name");
+
     let mut store = MongoStore::new();
     let league = store.get_league_by_name(&league_name);
 
@@ -90,16 +114,15 @@ fn add_season(matches: &ArgMatches) {
         Some(league) => {
             println!("Adding new season to {:?}", league);
 
-            // TODO: Use the dates if supplied
             let season = Season::new(
                 &league.id,
-                &Utc::now(),
-                &(Utc::now() + TimeDelta::days(30))
+                &start,
+                &end,
+                name.cloned()
             );
 
             store.create_season(&season);
         },
         None => println!("Cannot find league with name \"{}\".", league_name),
     }
-
 }

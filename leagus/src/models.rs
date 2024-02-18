@@ -1,6 +1,6 @@
+use bson::Uuid;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use bson::Uuid;
 
 // Some alaises to make it easier to read what ID is expected since they will
 // all be Uuids. Might have to figure out a nicer way to do this later.
@@ -45,17 +45,24 @@ pub struct Season {
     pub league_id: LeagueId,
     pub start: DateTime<Utc>,
     pub end: DateTime<Utc>,
+
+    #[serde(default)]
+    pub name: Option<String>,
+    // TODO: add table
+    // TODO: add scoring system
+    // TODO: add participants
 }
 
 impl Season {
     /// Create a new [`Season`] with a generated id.
-    pub fn new(league: &LeagueId, start: &DateTime<Utc>, end: &DateTime<Utc>) -> Season {
+    pub fn new(league: &LeagueId, start: &DateTime<Utc>, end: &DateTime<Utc>, name: Option<String>) -> Season {
         // TODO check start date is before end date.
         Season {
             id: SeasonId::new(),
             league_id: league.clone(),
             start: start.clone(),
-            end: end.clone()
+            end: end.clone(),
+            name,
         }
     }
 }
