@@ -40,6 +40,14 @@ impl WriteableStore for InMemoryStore {
     fn get_league_by_name(&self, league_name: &str) -> Option<League> {
         todo!()
     }
+
+    fn list_seasons(&self) -> Vec<Season> {
+        todo!()
+    }
+
+    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+        todo!()
+    }
 }
 
 #[cfg(test)]

@@ -108,6 +108,26 @@ impl WriteableStore for MongoStore {
         }
     }
 
+    fn list_seasons(&self) -> Vec<Season> {
+        let collection = seasons_collection(self);
+        let result = collection.find(None, None);
+
+        match result {
+            Ok(cursor) => cursor
+                .filter(|x| x.is_ok()) // Errors here are probably serialization related
+                .map(|x| x.unwrap())   // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!("Error finding leagues, {:?}", error);
+                Vec::new()
+            }
+        }
+    }
+
+    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+        todo!()
+    }
+
     fn create_season(&mut self, season: &Season) -> () {
         let seasons = seasons_collection(self);
         let leagues = leagues_collection(self);
