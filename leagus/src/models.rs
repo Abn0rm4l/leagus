@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+use bson::Uuid;
 
 // Some alaises to make it easier to read what ID is expected since they will
 // all be Uuids. Might have to figure out a nicer way to do this later.
@@ -27,7 +27,7 @@ impl League {
     /// Creates a new [`League`].
     pub fn new(name: &str, description: &str) -> League {
         League {
-            id: Uuid::new_v4(),
+            id: LeagueId::new(),
             name: String::from(name),
             description: String::from(description),
             seasons: Vec::new(),
@@ -45,6 +45,19 @@ pub struct Season {
     pub league_id: LeagueId,
     pub start: DateTime<Utc>,
     pub end: DateTime<Utc>,
+}
+
+impl Season {
+    /// Create a new [`Season`] with a generated id.
+    pub fn new(league: &LeagueId, start: &DateTime<Utc>, end: &DateTime<Utc>) -> Season {
+        // TODO check start date is before end date.
+        Season {
+            id: SeasonId::new(),
+            league_id: league.clone(),
+            start: start.clone(),
+            end: end.clone()
+        }
+    }
 }
 
 /// A session of a season.
@@ -79,7 +92,7 @@ mod tests {
 
     #[test]
     fn league_eqls() {
-        let uuid = Uuid::new_v4();
+        let uuid = LeagueId::new();
 
         let league1 = League {
             id: uuid,

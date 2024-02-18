@@ -1,6 +1,6 @@
 use mongodb::{sync::{Client, Collection}, bson::doc, options::IndexOptions, IndexModel};
 
-use crate::models::{League, Season};
+use crate::models::{League, Season, LeagueId};
 
 use super::WriteableStore;
 

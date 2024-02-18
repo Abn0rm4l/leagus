@@ -1,13 +1,12 @@
 // In Memory Store
 
 use super::WriteableStore;
-use crate::models::League;
+use crate::models::{League, LeagueId, Season};
 use std::collections::HashMap;
-use uuid::Uuid;
 
 /// Super basic in memory store, mostly useful for testing.
 pub struct InMemoryStore {
-    leagues: HashMap<Uuid, League>,
+    leagues: HashMap<LeagueId, League>,
 }
 
 impl InMemoryStore {
@@ -23,7 +22,7 @@ impl WriteableStore for InMemoryStore {
         self.leagues.insert(league.id, league);
     }
 
-    fn get_league(&self, league_id: &uuid::Uuid) -> Option<League> {
+    fn get_league(&self, league_id: &LeagueId) -> Option<League> {
         match self.leagues.get(league_id) {
             Some(league) => Some(league.clone()),
             None => None,
@@ -31,6 +30,10 @@ impl WriteableStore for InMemoryStore {
     }
 
     fn list_leagues(&self) -> Vec<League> {
+        todo!()
+    }
+
+    fn create_season(&mut self, season: &Season) -> () {
         todo!()
     }
 }
@@ -47,7 +50,7 @@ mod tests {
             leagues: HashMap::new(),
         };
 
-        let id = Uuid::new_v4();
+        let id = LeagueId::new();
 
         let league = League {
             id,
