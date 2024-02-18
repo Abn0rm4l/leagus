@@ -36,6 +36,10 @@ impl WriteableStore for InMemoryStore {
     fn create_season(&mut self, season: &Season) -> () {
         todo!()
     }
+
+    fn get_league_by_name(&self, league_name: &str) -> Option<League> {
+        todo!()
+    }
 }
 
 #[cfg(test)]

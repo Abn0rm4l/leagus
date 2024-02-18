@@ -70,8 +70,26 @@ impl WriteableStore for MongoStore {
         let _ = collection.insert_one(league, None);
     }
 
-    fn get_league(&self, _league_id: &uuid::Uuid) -> Option<League> {
-        todo!()
+    fn get_league(&self, league_id: &LeagueId) -> Option<League> {
+        let leagues = leagues_collection(self);
+        let result = leagues.find_one(
+            doc! {
+                "_id": league_id
+            },
+            None
+        );
+        result.unwrap()
+    }
+
+    fn get_league_by_name(&self, league_name: &str) -> Option<League> {
+        let leagues = leagues_collection(self);
+        let result = leagues.find_one(
+            doc! {
+                "name": league_name
+            },
+            None
+        );
+        result.unwrap()
     }
 
     fn list_leagues(&self) -> Vec<League> {
@@ -88,6 +106,30 @@ impl WriteableStore for MongoStore {
                 Vec::new()
             }
         }
+    }
+
+    fn create_season(&mut self, season: &Season) -> () {
+        let seasons = seasons_collection(self);
+        let leagues = leagues_collection(self);
+
+        // TODO: wrap this in a transaction The season should only be added if
+        // it can be added to the league
+        let _ = seasons.insert_one(season, None);
+
+        // Add the seasons to the list of seasons
+        let league = self.get_league(&season.league_id).unwrap();
+        let mut seasons = league.seasons;
+        seasons.push(season.league_id);
+
+        let _update_result = leagues.update_one(
+            doc! {
+                "_id": league.id
+            },
+            doc! {
+                "$set": { "seasons": seasons }
+            },
+            None
+        );
     }
 }
 

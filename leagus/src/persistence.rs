@@ -13,6 +13,9 @@ pub trait WriteableStore {
     /// Get the League from the store with the matching ID.
     fn get_league(&self, league_id: &LeagueId) -> Option<League>;
 
+    /// Get [`League`] by name.
+    fn get_league_by_name(&self, league_name: &str) -> Option<League>;
+
     /// List all the leagues
     fn list_leagues(&self) -> Vec<League>;
 

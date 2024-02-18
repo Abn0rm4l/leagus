@@ -1,5 +1,6 @@
+use chrono::{DateTime, Utc, TimeDelta};
 use clap::{arg, ArgMatches, Command};
-use leagus::models::League;
+use leagus::models::{League, Season};
 use leagus::persistence::mongo_store::MongoStore;
 use leagus::persistence::WriteableStore;
 
@@ -27,7 +28,23 @@ pub fn commands() -> Command {
                 .about("List existing leagues")
                 .arg(arg!(
                     -n --name <NAME> "Name of new league"
-                )),
+                ))
+        )
+        .subcommand(
+            Command::new("add-season")
+                .about("Add a new season")
+                .arg(arg!(
+                    -s --start <DATE> "Start date of new season"
+                ))
+                .arg(arg!(
+                    -e --end <DATE> "End date of new season"
+                ))
+                .arg(
+                    arg!(
+                        -l --league <NAME> "Name of league to add the new season"
+                    )
+                    .required(true)
+                )
         )
 }
 
@@ -35,6 +52,7 @@ pub fn handle_subcommands(matches: &ArgMatches) {
     match matches.subcommand() {
         Some(("create", sub_matches)) => create(sub_matches),
         Some(("list", sub_matches)) => list(sub_matches),
+        Some(("add-season", sub_matches)) => add_season(sub_matches),
         _ => unreachable!("Must specify a subcommand"),
     }
 }
@@ -61,4 +79,27 @@ fn list(_matches: &ArgMatches) {
     for league in leagues {
         println!("- {} \n\tid: {}", league.name, league.id);
     }
+}
+
+fn add_season(matches: &ArgMatches) {
+    let league_name = matches.get_one::<String>("league").expect("required");
+    let mut store = MongoStore::new();
+    let league = store.get_league_by_name(&league_name);
+
+    match league {
+        Some(league) => {
+            println!("Adding new season to {:?}", league);
+
+            // TODO: Use the dates if supplied
+            let season = Season::new(
+                &league.id,
+                &Utc::now(),
+                &(Utc::now() + TimeDelta::days(30))
+            );
+
+            store.create_season(&season);
+        },
+        None => println!("Cannot find league with name \"{}\".", league_name),
+    }
+
 }
