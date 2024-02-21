@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc, TimeDelta};
 use clap::{arg, ArgMatches, Command};
-use leagus::models::{League, Season};
+use leagus::models::Season;
 use leagus::persistence::mongo_store::MongoStore;
 use leagus::persistence::WriteableStore;
 

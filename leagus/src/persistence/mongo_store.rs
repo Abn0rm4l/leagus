@@ -124,7 +124,7 @@ impl WriteableStore for MongoStore {
         }
     }
 
-    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+    fn list_seasons_for_league(&self, _league_id: &LeagueId) -> Vec<Season> {
         todo!()
     }
 

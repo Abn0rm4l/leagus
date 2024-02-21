@@ -33,11 +33,11 @@ impl WriteableStore for InMemoryStore {
         todo!()
     }
 
-    fn create_season(&mut self, season: &Season) -> () {
+    fn create_season(&mut self, _season: &Season) -> () {
         todo!()
     }
 
-    fn get_league_by_name(&self, league_name: &str) -> Option<League> {
+    fn get_league_by_name(&self, _league_name: &str) -> Option<League> {
         todo!()
     }
 
@@ -45,7 +45,7 @@ impl WriteableStore for InMemoryStore {
         todo!()
     }
 
-    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+    fn list_seasons_for_league(&self, _league_id: &LeagueId) -> Vec<Season> {
         todo!()
     }
 }
