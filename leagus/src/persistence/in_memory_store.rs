@@ -18,7 +18,7 @@ impl InMemoryStore {
 }
 
 impl WriteableStore for InMemoryStore {
-    fn create_league(&mut self, league: League) -> () {
+    fn create_league(&mut self, league: League) {
         self.leagues.insert(league.id, league);
     }
 
@@ -33,7 +33,7 @@ impl WriteableStore for InMemoryStore {
         todo!()
     }
 
-    fn create_season(&mut self, _season: &Season) -> () {
+    fn create_season(&mut self, _season: &Season) {
         todo!()
     }
 
@@ -46,6 +46,26 @@ impl WriteableStore for InMemoryStore {
     }
 
     fn list_seasons_for_league(&self, _league_id: &LeagueId) -> Vec<Season> {
+        todo!()
+    }
+
+    fn create_session(&mut self, _session: &crate::models::Session) {
+        todo!()
+    }
+
+    fn create_round(&mut self, _round: &crate::models::Round) {
+        todo!()
+    }
+
+    fn create_match(&mut self, _a_match: &crate::models::Match) {
+        todo!()
+    }
+
+    fn create_venue(&mut self, _venue: &crate::models::Venue) {
+        todo!()
+    }
+
+    fn get_season(&self, _season_id: &crate::models::SeasonId) -> Option<Season> {
         todo!()
     }
 }

@@ -5,7 +5,7 @@ use mongodb::{
     IndexModel,
 };
 
-use crate::models::{League, LeagueId, Match, Round, Season, Session};
+use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, Venue};
 
 use super::WriteableStore;
 
@@ -18,6 +18,7 @@ const COLLECTION_SEASONS: &str = "seasons";
 const COLLECTION_SESSIONS: &str = "sessions";
 const COLLECTION_ROUNDS: &str = "rounds";
 const COLLECTION_MATCHES: &str = "matches";
+const COLLECTION_VENUES: &str = "venues";
 
 pub struct MongoStore {
     client: Client,
@@ -96,6 +97,46 @@ impl WriteableStore for MongoStore {
         let _ = collection.insert_one(league, None);
     }
 
+    fn create_season(&mut self, season: &Season) {
+        let seasons = seasons_collection(self);
+        let _ = seasons.insert_one(season, None);
+
+        // // Add the seasons to the list of seasons
+        // let league = self.get_league(&season.league_id).unwrap();
+        // let mut seasons = league.seasons;
+        // seasons.push(season.league_id);
+        //
+        // let _update_result = leagues.update_one(
+        //     doc! {
+        //         "_id": league.id
+        //     },
+        //     doc! {
+        //         "$set": { "seasons": seasons }
+        //     },
+        //     None,
+        // );
+    }
+
+    fn create_session(&mut self, session: &Session) {
+        let sessions = session_collection(self);
+        let _ = sessions.insert_one(session, None);
+    }
+
+    fn create_round(&mut self, round: &Round) {
+        let rounds = round_collection(self);
+        let _ = rounds.insert_one(round, None);
+    }
+
+    fn create_match(&mut self, a_match: &Match) {
+        let matches = match_collection(self);
+        let _ = matches.insert_one(a_match, None);
+    }
+
+    fn create_venue(&mut self, venue: &Venue) {
+        let venues = venue_collection(self);
+        let _ = venues.insert_one(venue, None);
+    }
+
     fn get_league(&self, league_id: &LeagueId) -> Option<League> {
         let leagues = leagues_collection(self);
         let result = leagues.find_one(
@@ -112,6 +153,17 @@ impl WriteableStore for MongoStore {
         let result = leagues.find_one(
             doc! {
                 "name": league_name
+            },
+            None,
+        );
+        result.unwrap()
+    }
+
+    fn get_season(&self, season_id: &SeasonId) -> Option<Season> {
+        let seasons = seasons_collection(self);
+        let result = seasons.find_one(
+            doc! {
+                "_id": season_id
             },
             None,
         );
@@ -170,30 +222,6 @@ impl WriteableStore for MongoStore {
             }
         }
     }
-
-    fn create_season(&mut self, season: &Season) {
-        let seasons = seasons_collection(self);
-        let leagues = leagues_collection(self);
-
-        // TODO: wrap this in a transaction The season should only be added if
-        // it can be added to the league
-        let _ = seasons.insert_one(season, None);
-
-        // Add the seasons to the list of seasons
-        let league = self.get_league(&season.league_id).unwrap();
-        let mut seasons = league.seasons;
-        seasons.push(season.league_id);
-
-        let _update_result = leagues.update_one(
-            doc! {
-                "_id": league.id
-            },
-            doc! {
-                "$set": { "seasons": seasons }
-            },
-            None,
-        );
-    }
 }
 
 impl Drop for MongoStore {
@@ -232,4 +260,10 @@ fn round_collection(store: &MongoStore) -> Collection<Round> {
 fn match_collection(store: &MongoStore) -> Collection<Match> {
     let db = store.client.database(DB_NAME);
     db.collection::<Match>(COLLECTION_MATCHES)
+}
+
+/// Return a handle to the MongoDB Matches Collection
+fn venue_collection(store: &MongoStore) -> Collection<Venue> {
+    let db = store.client.database(DB_NAME);
+    db.collection::<Venue>(COLLECTION_VENUES)
 }
