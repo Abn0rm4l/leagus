@@ -68,6 +68,17 @@ impl WriteableStore for InMemoryStore {
     fn get_season(&self, _season_id: &crate::models::SeasonId) -> Option<Season> {
         todo!()
     }
+
+    fn list_sessions(&self) -> Vec<crate::models::Session> {
+        todo!()
+    }
+
+    fn list_sessions_for_season(
+        &self,
+        _season_id: &crate::models::SeasonId,
+    ) -> Vec<crate::models::Session> {
+        todo!()
+    }
 }
 
 #[cfg(test)]

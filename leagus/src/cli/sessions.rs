@@ -1,0 +1,82 @@
+use bson::Uuid;
+use chrono::{DateTime, Utc};
+use clap::{arg, ArgMatches, Command};
+use leagus::models::Session;
+use leagus::persistence::mongo_store::MongoStore;
+use leagus::persistence::WriteableStore;
+
+pub const CMD_NAME: &str = "sessions";
+
+pub fn commands() -> Command {
+    Command::new(CMD_NAME)
+        .about("Commands for managing sessions")
+        .subcommand_required(true)
+        .subcommand(
+            Command::new("create")
+                .about("Create a new session")
+                .arg(arg!(
+                    -d --date <DATE> "Date of new sessions"
+                ))
+                .arg(
+                    arg!(
+                        -s --season <NAME> "Name of season to add the new season"
+                    )
+                    .required(true),
+                ),
+        )
+        .subcommand(
+            Command::new("list")
+                .about("List existing sessions")
+                .arg(arg!(
+                    -s --season <NAME> "Filter sessions by season"
+                )),
+        )
+}
+
+/// Delegate subcommands of the league command
+pub fn handle_subcommands(matches: &ArgMatches) {
+    match matches.subcommand() {
+        Some(("create", sub_matches)) => create(sub_matches),
+        Some(("list", sub_matches)) => list(sub_matches),
+        _ => unreachable!("Must specify a subcommand"),
+    }
+}
+
+/// Add a new season to a league
+fn create(matches: &ArgMatches) {
+    let season_name = matches.get_one::<String>("season").expect("required");
+    let season_name = Uuid::parse_str(season_name).expect("Invalid season id");
+
+    // TODO: handle bad dates with more grace
+    // TODO: be more flexible on date formats
+    let date = matches.get_one::<String>("date");
+    let date = match date {
+        Some(date) => date.parse::<DateTime<Utc>>().unwrap(),
+        None => Utc::now(),
+    };
+
+    let mut store = MongoStore::new();
+    let season = store.get_season(&season_name);
+
+    match season {
+        Some(season) => {
+            println!("Adding new session to {:?}", season);
+            let session = Session::new(&season.id, &date);
+            store.create_session(&session);
+        }
+        None => println!("Cannot find league with name \"{}\".", season_name),
+    }
+}
+
+/// List all leagues
+fn list(_matches: &ArgMatches) {
+    let store = MongoStore::new();
+    let seasons = store.list_seasons();
+    for season in seasons {
+        println!("Season: {}", season.name.unwrap_or(season.id.to_string()));
+        let sessions = store.list_sessions_for_season(&season.id);
+        for season in sessions {
+            println!("\t- {:?}", season);
+        }
+    }
+}

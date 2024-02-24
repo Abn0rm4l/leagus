@@ -90,11 +90,11 @@ pub struct Session {
 }
 
 impl Session {
-    pub fn new(season_id: SeasonId, date: DateTime<Utc>) -> Session {
+    pub fn new(season_id: &SeasonId, date: &DateTime<Utc>) -> Session {
         Session {
             id: SessionId::new(),
-            season_id,
-            date,
+            season_id: *season_id,
+            date: *date,
         }
     }
 }

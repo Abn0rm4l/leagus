@@ -68,7 +68,7 @@ impl MongoStore {
 
     /// Bootstrap the sessions collection
     fn bootstrap_sessions(&mut self) {
-        let collection = session_collection(self);
+        let collection = sessions_collection(self);
         let index = IndexModel::builder().keys(doc! {"season_id": 1}).build();
         let _ = collection.create_index(index, None);
     }
@@ -118,7 +118,7 @@ impl WriteableStore for MongoStore {
     }
 
     fn create_session(&mut self, session: &Session) {
-        let sessions = session_collection(self);
+        let sessions = sessions_collection(self);
         let _ = sessions.insert_one(session, None);
     }
 
@@ -194,7 +194,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding leagues, {:?}", error);
+                println!("Error finding seasons, {:?}", error);
                 Vec::new()
             }
         }
@@ -217,6 +217,44 @@ impl WriteableStore for MongoStore {
                 println!(
                     "Error finding seasons for league '{:?}', {:?}",
                     league_id, error
+                );
+                Vec::new()
+            }
+        }
+    }
+
+    fn list_sessions(&self) -> Vec<Session> {
+        let collection = sessions_collection(self);
+        let result = collection.find(None, None);
+
+        match result {
+            Ok(cursor) => cursor
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!("Error finding sessions, {:?}", error);
+                Vec::new()
+            }
+        }
+    }
+
+    fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session> {
+        let collection = sessions_collection(self);
+        let result = collection.find(
+            doc! {
+                "season_id": season_id
+            },
+            None,
+        );
+
+        match result {
+            Ok(cursor) => cursor
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!(
+                    "Error finding seasons for league '{:?}', {:?}",
+                    season_id, error
                 );
                 Vec::new()
             }
@@ -245,7 +283,7 @@ fn seasons_collection(store: &MongoStore) -> Collection<Season> {
 }
 
 /// Return a handle to the MongoDB Sessions Collection
-fn session_collection(store: &MongoStore) -> Collection<Session> {
+fn sessions_collection(store: &MongoStore) -> Collection<Session> {
     let db = store.client.database(DB_NAME);
     db.collection::<Session>(COLLECTION_SESSIONS)
 }

@@ -36,7 +36,8 @@ pub trait WriteableStore {
 
     /// List all the seasons
     fn list_seasons(&self) -> Vec<Season>;
-
-    /// List all the seasons for the league
     fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season>;
+
+    fn list_sessions(&self) -> Vec<Session>;
+    fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
 }
