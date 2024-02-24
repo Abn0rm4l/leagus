@@ -1,7 +1,7 @@
 mod cli;
 
 use clap::command;
-use cli::{leagues, participants, database, seasons};
+use cli::{database, leagues, participants, seasons};
 
 /// The CLI interface for Leagus
 fn main() {
@@ -16,10 +16,12 @@ fn main() {
         .get_matches();
 
     match matches.subcommand() {
-        Some((database::CMD_NAME, sub_matches)) => database::handle_subcommands(&sub_matches),
-        Some((leagues::CMD_NAME, sub_matches)) => leagues::handle_subcommands(&sub_matches),
-        Some((seasons::CMD_NAME, sub_matches)) => seasons::handle_subcommands(&sub_matches),
-        Some((participants::CMD_NAME, sub_matches)) => participants::handle_subcommands(&sub_matches),
+        Some((database::CMD_NAME, sub_matches)) => database::handle_subcommands(sub_matches),
+        Some((leagues::CMD_NAME, sub_matches)) => leagues::handle_subcommands(sub_matches),
+        Some((seasons::CMD_NAME, sub_matches)) => seasons::handle_subcommands(sub_matches),
+        Some((participants::CMD_NAME, sub_matches)) => {
+            participants::handle_subcommands(sub_matches)
+        }
         _ => unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`"),
     }
 }

@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc, TimeDelta};
+use chrono::{DateTime, TimeDelta, Utc};
 use clap::{arg, ArgMatches, Command};
 use leagus::models::Season;
 use leagus::persistence::mongo_store::MongoStore;
@@ -26,15 +26,15 @@ pub fn commands() -> Command {
                     arg!(
                         -l --league <NAME> "Name of league to add the new season"
                     )
-                    .required(true)
-                )
+                    .required(true),
+                ),
         )
         .subcommand(
             Command::new("list")
                 .about("List existing seasons")
                 .arg(arg!(
                     -n --name <NAME> "Name of new league"
-                ))
+                )),
         )
 }
 
@@ -68,35 +68,29 @@ fn create(matches: &ArgMatches) {
     let name = matches.get_one::<String>("name");
 
     let mut store = MongoStore::new();
-    let league = store.get_league_by_name(&league_name);
+    let league = store.get_league_by_name(league_name);
 
     match league {
         Some(league) => {
             println!("Adding new season to {:?}", league);
 
-            let season = Season::new(
-                &league.id,
-                &start,
-                &end,
-                name.cloned()
-            );
+            let season = Season::new(&league.id, &start, &end, name.cloned());
 
             store.create_season(&season);
-        },
+        }
         None => println!("Cannot find league with name \"{}\".", league_name),
     }
 }
 
 /// List all leagues
 fn list(_matches: &ArgMatches) {
-    println!("Seasons:");
     let store = MongoStore::new();
-    let seasons = store.list_seasons();
-    for season in seasons {
-        // TODO: add better error handling
-        // TODO: reorder this query so we're not hitting the DB every iteration
-        let league = store.get_league(&season.league_id)
-            .expect("A season must be linked to a valid league");
-        println!("- League: {} \t- {:?}", league.name, season);
+    let leagues = store.list_leagues();
+    for league in leagues {
+        println!("League: {}", league.name);
+        let seasons = store.list_seasons_for_league(&league.id);
+        for season in seasons {
+            println!("\t- {:?}", season);
+        }
     }
 }

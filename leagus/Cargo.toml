@@ -8,8 +8,8 @@ description = "The Leagus league management tool"
 
 [dependencies]
 time = "0.3.34"
-clap = { version = "4.5.0", features = ["derive", "color", "cargo"] }
-serde = "1.0.196"
+clap = { version = "4.5.1", features = ["derive", "color", "cargo"] }
+serde = "1.0.197"
 bson = "2.9.0"
 
 # [dependencies.uuid]
@@ -27,7 +27,7 @@ features = ["tokio-sync"]
 [dependencies.chrono]
 version = "0.4.34"
 features = [
-    "serde",            # Enable serialization/de-serialization via serde
+  "serde", # Enable serialization/de-serialization via serde
 ]
 
 [dev-dependencies]

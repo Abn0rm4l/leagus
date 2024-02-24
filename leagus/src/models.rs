@@ -60,13 +60,18 @@ pub struct Season {
 
 impl Season {
     /// Create a new [`Season`] with a generated id.
-    pub fn new(league: &LeagueId, start: &DateTime<Utc>, end: &DateTime<Utc>, name: Option<String>) -> Season {
+    pub fn new(
+        league: &LeagueId,
+        start: &DateTime<Utc>,
+        end: &DateTime<Utc>,
+        name: Option<String>,
+    ) -> Season {
         // TODO check start date is before end date.
         Season {
             id: SeasonId::new(),
-            league_id: league.clone(),
-            start: start.clone(),
-            end: end.clone(),
+            league_id: *league,
+            start: *start,
+            end: *end,
             name,
         }
     }
@@ -89,7 +94,7 @@ impl Session {
         Session {
             id: SessionId::new(),
             season_id,
-            date
+            date,
         }
     }
 }
@@ -115,7 +120,7 @@ impl Round {
         Round {
             id: RoundId::new(),
             session_id,
-            participants: Vec::new()
+            participants: Vec::new(),
         }
     }
 }
@@ -145,7 +150,7 @@ impl Match {
             id: MatchId::new(),
             round_id,
             venue_id,
-            participants: Vec::new()
+            participants: Vec::new(),
         }
     }
 }

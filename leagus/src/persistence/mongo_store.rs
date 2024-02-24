@@ -1,6 +1,11 @@
-use mongodb::{sync::{Client, Collection}, bson::doc, options::IndexOptions, IndexModel};
+use mongodb::{
+    bson::doc,
+    options::IndexOptions,
+    sync::{Client, Collection},
+    IndexModel,
+};
 
-use crate::models::{League, Season, LeagueId};
+use crate::models::{League, LeagueId, Match, Round, Season, Session};
 
 use super::WriteableStore;
 
@@ -10,6 +15,9 @@ const DB_NAME: &str = "leagus";
 // Name of the Leagues Collection
 const COLLECTION_LEAGUES: &str = "leagues";
 const COLLECTION_SEASONS: &str = "seasons";
+const COLLECTION_SESSIONS: &str = "sessions";
+const COLLECTION_ROUNDS: &str = "rounds";
+const COLLECTION_MATCHES: &str = "matches";
 
 pub struct MongoStore {
     client: Client,
@@ -30,15 +38,16 @@ impl MongoStore {
     pub fn bootstrap(&mut self) {
         self.bootstrap_leagues();
         self.bootstrap_seasons();
+        self.bootstrap_sessions();
+        self.bootstrap_rounds();
+        self.bootstrap_matches();
     }
 
     /// Bootstrap the leagues collection
     fn bootstrap_leagues(&mut self) {
         let collection = leagues_collection(self);
 
-        let opts = IndexOptions::builder()
-            .unique(true)
-            .build();
+        let opts = IndexOptions::builder().unique(true).build();
 
         // Add an index for name to easily query based on name
         let index = IndexModel::builder()
@@ -52,17 +61,34 @@ impl MongoStore {
     /// Bootstrap the seasons collection
     fn bootstrap_seasons(&mut self) {
         let collection = seasons_collection(self);
+        let index = IndexModel::builder().keys(doc! {"league_id": 1}).build();
+        let _ = collection.create_index(index, None);
+    }
 
-        let index = IndexModel::builder()
-            .keys(doc! {"league_id": 1})
-            .build();
+    /// Bootstrap the sessions collection
+    fn bootstrap_sessions(&mut self) {
+        let collection = session_collection(self);
+        let index = IndexModel::builder().keys(doc! {"season_id": 1}).build();
+        let _ = collection.create_index(index, None);
+    }
 
+    /// Bootstrap the rounds collection
+    fn bootstrap_rounds(&mut self) {
+        let collection = round_collection(self);
+        let index = IndexModel::builder().keys(doc! {"session_id": 1}).build();
+        let _ = collection.create_index(index, None);
+    }
+
+    /// Bootstrap the matches collection
+    fn bootstrap_matches(&mut self) {
+        let collection = match_collection(self);
+        let index = IndexModel::builder().keys(doc! {"round_id": 1}).build();
         let _ = collection.create_index(index, None);
     }
 }
 
 impl WriteableStore for MongoStore {
-    fn create_league(&mut self, league: League) -> () {
+    fn create_league(&mut self, league: League) {
         let collection = leagues_collection(self);
 
         // TODO: Return some kind of error when failing to insert a document,
@@ -76,7 +102,7 @@ impl WriteableStore for MongoStore {
             doc! {
                 "_id": league_id
             },
-            None
+            None,
         );
         result.unwrap()
     }
@@ -87,7 +113,7 @@ impl WriteableStore for MongoStore {
             doc! {
                 "name": league_name
             },
-            None
+            None,
         );
         result.unwrap()
     }
@@ -98,8 +124,7 @@ impl WriteableStore for MongoStore {
 
         match result {
             Ok(cursor) => cursor
-                .filter(|x| x.is_ok()) // Errors here are probably serialization related
-                .map(|x| x.unwrap())   // TODO: log out 'broken' docs
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
                 println!("Error finding leagues, {:?}", error);
@@ -114,8 +139,7 @@ impl WriteableStore for MongoStore {
 
         match result {
             Ok(cursor) => cursor
-                .filter(|x| x.is_ok()) // Errors here are probably serialization related
-                .map(|x| x.unwrap())   // TODO: log out 'broken' docs
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
                 println!("Error finding leagues, {:?}", error);
@@ -124,11 +148,30 @@ impl WriteableStore for MongoStore {
         }
     }
 
-    fn list_seasons_for_league(&self, _league_id: &LeagueId) -> Vec<Season> {
-        todo!()
+    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+        let collection = seasons_collection(self);
+        let result = collection.find(
+            doc! {
+                "league_id": league_id
+            },
+            None,
+        );
+
+        match result {
+            Ok(cursor) => cursor
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!(
+                    "Error finding seasons for league '{:?}', {:?}",
+                    league_id, error
+                );
+                Vec::new()
+            }
+        }
     }
 
-    fn create_season(&mut self, season: &Season) -> () {
+    fn create_season(&mut self, season: &Season) {
         let seasons = seasons_collection(self);
         let leagues = leagues_collection(self);
 
@@ -148,7 +191,7 @@ impl WriteableStore for MongoStore {
             doc! {
                 "$set": { "seasons": seasons }
             },
-            None
+            None,
         );
     }
 }
@@ -171,4 +214,22 @@ fn leagues_collection(store: &MongoStore) -> Collection<League> {
 fn seasons_collection(store: &MongoStore) -> Collection<Season> {
     let db = store.client.database(DB_NAME);
     db.collection::<Season>(COLLECTION_SEASONS)
+}
+
+/// Return a handle to the MongoDB Sessions Collection
+fn session_collection(store: &MongoStore) -> Collection<Session> {
+    let db = store.client.database(DB_NAME);
+    db.collection::<Session>(COLLECTION_SESSIONS)
+}
+
+/// Return a handle to the MongoDB Rounds Collection
+fn round_collection(store: &MongoStore) -> Collection<Round> {
+    let db = store.client.database(DB_NAME);
+    db.collection::<Round>(COLLECTION_ROUNDS)
+}
+
+/// Return a handle to the MongoDB Matches Collection
+fn match_collection(store: &MongoStore) -> Collection<Match> {
+    let db = store.client.database(DB_NAME);
+    db.collection::<Match>(COLLECTION_MATCHES)
 }
