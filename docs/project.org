@@ -1,9 +1,89 @@
-#+title: Project Design Document
+#+title: The Leagus Project Document
 #+options: h:1 num:nil toc:nil
 
 * Overview
 The goal of the project is to build software for the purpose of managing and tracking various types of leagues.
 
+* Milestones [1/4]
+** DONE store and retrieve a document via the cli
+CLOSED: [2024-02-25 Sun 17:55]
+** TODO store and retrieve a document via the api
+** TODO CRUD operations available in cli
+*** TODO CRUD available for leagues
+**** DONE list
+CLOSED: [2024-02-25 Sun 18:41]
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for seasons
+**** DONE list
+CLOSED: [2024-02-25 Sun 18:41]
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for sessions
+**** DONE list
+CLOSED: [2024-02-25 Sun 18:41]
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for matches
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for venues
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for participants
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+** TODO CRUD operations available in api
+*** TODO CRUD available for leagues
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for seasons
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for sessions
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for matches
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for venues
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+*** TODO CRUD available for participants
+**** TODO list
+**** TODO get
+**** TODO update
+**** TODO delete
+* Tasks
+** Core [0/2]
+*** TODO support async contexts
+This is needed for the web API as both Actix and Axum use an async runtime which does not work with the synchronous mongodb client.
+*** TODO add pagination support to list apis
+** CLI [0/0]
+** API [0/2]
+*** IN-PROGRESS add stub handlers for paths
+Set up all the api paths and add stub handlers with some data to be used for testing.
+*** TODO add pagination support to list apis
+** APP
 * Design
 ** Domain Model
 The basic domain model could be as follows.
@@ -90,3 +170,16 @@ The basic domain model could be as follows.
 #+caption: Leagus Domain Model
 #+RESULTS: fig:leagus_domain_model
 [[file:resources/structure.png]]
+
+** Components
+[[file:resources/Components.svg][Components]]
+
+*** Core
+Core is where all the domain logic will be located.
+This includes the domain models and functions for interacting with the model as well a the persistence layer for interacting with MongoDB.
+
+*** Web API
+The HTTP API through which the functionality will be exposed to web clients. Built with a Rust web framework like Axum or Actix.
+
+*** Web App
+The user facing web app. Let's try out SvelteKit + Flowbite-Svelte as the key tech.

@@ -1,0 +1,25 @@
+<mxfile host="app.diagrams.net" modified="2024-02-24T18:45:26.818Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0" etag="IzSxzapeAO0DeUttt8Ca" version="23.1.5" type="device">
+  <diagram name="Page-1" id="XK9vBe3nFVDsbnq9x19j">
+    <mxGraphModel dx="2033" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KldfgHMvO4JfyCMl7Jyr-1" value="&lt;div&gt;Leagus Core&lt;/div&gt;&lt;div align=&quot;left&quot; style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Models&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px;&quot; align=&quot;left&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Persistence&lt;/font&gt;&lt;/div&gt;&lt;div align=&quot;left&quot; style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Written in Rust&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=30;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="160" y="520" width="520" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="KldfgHMvO4JfyCMl7Jyr-2" value="&lt;div&gt;Leagus CLI&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Part of core&lt;/font&gt;&lt;/div&gt;&lt;div align=&quot;left&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Mostly used for testing an admin&lt;br&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;glass=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="160" y="440" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KldfgHMvO4JfyCMl7Jyr-3" value="&lt;div&gt;Leagus Web API&lt;/div&gt;&lt;div style=&quot;font-size: 10px;&quot; align=&quot;left&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- HTTP Rest API&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px;&quot; align=&quot;left&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Written in Rust&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px;&quot; align=&quot;left&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Axum framework&lt;/font&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="400" y="440" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KldfgHMvO4JfyCMl7Jyr-4" value="MongoDB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="160" y="640" width="520" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KldfgHMvO4JfyCMl7Jyr-5" value="&lt;div style=&quot;font-size: 16px;&quot;&gt;Leagus Web App&lt;/div&gt;&lt;div align=&quot;left&quot; style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Using SvelteKit&lt;/font&gt;&lt;/div&gt;&lt;div align=&quot;left&quot; style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- JavaScript, CSS, HTML&lt;/font&gt;&lt;/div&gt;&lt;div align=&quot;left&quot; style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- Flowbite UI, TailwindCSS&lt;br&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="400" y="360" width="280" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
