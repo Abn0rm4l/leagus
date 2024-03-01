@@ -1,5 +1,5 @@
+pub mod in_memory_store;
 pub mod mongo_store;
-pub mod sync;
 
 use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, Venue};
 

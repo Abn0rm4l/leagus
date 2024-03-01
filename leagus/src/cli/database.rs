@@ -1,6 +1,5 @@
 use clap::{arg, ArgMatches, Command};
-use leagus::persistence::mongo_store::MongoStore;
-use leagus::persistence::WriteableStore;
+use leagus::persistence::sync::{mongo_store::MongoStore, WriteableStore};
 
 pub const CMD_NAME: &str = "database";
 
@@ -8,10 +7,7 @@ pub fn commands() -> Command {
     Command::new(CMD_NAME)
         .about("Commands for managing the Leagus database")
         .subcommand_required(true)
-        .subcommand(
-            Command::new("bootstrap")
-                .about("Bootstrap the database")
-        )
+        .subcommand(Command::new("bootstrap").about("Bootstrap the database"))
         .subcommand(
             Command::new("list")
                 .about("List existing leagues")

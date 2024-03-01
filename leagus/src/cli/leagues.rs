@@ -1,7 +1,6 @@
 use clap::{arg, ArgMatches, Command};
 use leagus::models::League;
-use leagus::persistence::mongo_store::MongoStore;
-use leagus::persistence::WriteableStore;
+use leagus::persistence::sync::{mongo_store::MongoStore, WriteableStore};
 
 pub const CMD_NAME: &str = "leagues";
 
@@ -27,7 +26,7 @@ pub fn commands() -> Command {
                 .about("List existing leagues")
                 .arg(arg!(
                     -n --name <NAME> "Name of new league"
-                ))
+                )),
         )
 }
 

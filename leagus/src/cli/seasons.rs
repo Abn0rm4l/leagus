@@ -1,8 +1,7 @@
 use chrono::{DateTime, TimeDelta, Utc};
 use clap::{arg, ArgMatches, Command};
 use leagus::models::Season;
-use leagus::persistence::mongo_store::MongoStore;
-use leagus::persistence::WriteableStore;
+use leagus::persistence::sync::{mongo_store::MongoStore, WriteableStore};
 
 pub const CMD_NAME: &str = "seasons";
 

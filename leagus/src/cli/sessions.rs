@@ -2,8 +2,7 @@ use bson::Uuid;
 use chrono::{DateTime, Utc};
 use clap::{arg, ArgMatches, Command};
 use leagus::models::Session;
-use leagus::persistence::mongo_store::MongoStore;
-use leagus::persistence::WriteableStore;
+use leagus::persistence::sync::{mongo_store::MongoStore, WriteableStore};
 
 pub const CMD_NAME: &str = "sessions";
 
