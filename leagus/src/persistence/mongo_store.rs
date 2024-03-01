@@ -1,13 +1,12 @@
-use mongodb::{
-    bson::doc,
-    options::IndexOptions,
-    sync::{Client, Collection},
-    IndexModel,
-};
+use std::result;
+
+use futures::stream::{StreamExt, TryStreamExt};
+use mongodb::error::Result;
+use mongodb::options::ClientOptions;
+use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
 
 use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, Venue};
-
-use super::WriteableStore;
+use crate::persistence::WriteableStore;
 
 /// Name of the MongoDB Database
 const DB_NAME: &str = "leagus";
@@ -26,11 +25,14 @@ pub struct MongoStore {
 
 impl MongoStore {
     /// Create a new MongoDB-backed store.
-    pub fn new() -> MongoStore {
-        let result = Client::with_uri_str("mongodb://root:example@127.0.0.1:27017");
+    pub async fn new() -> Result<MongoStore> {
+        let client_options =
+            ClientOptions::parse_async("mongodb://root:example@127.0.0.1:27017").await?;
 
-        match result {
-            Ok(client) => MongoStore { client },
+        let client = Client::with_options(client_options);
+
+        match client {
+            Ok(client) => Ok(MongoStore { client }),
             Err(error) => panic!("Problem opening a connection, {:?}", error),
         }
     }
@@ -89,95 +91,99 @@ impl MongoStore {
 }
 
 impl WriteableStore for MongoStore {
-    fn create_league(&mut self, league: League) {
+    // fn create_league(&mut self, league: League) {
+    //     let collection = leagues_collection(self);
+    //
+    //     // TODO: Return some kind of error when failing to insert a document,
+    //     // for example; when inserting a duplicate entry.
+    //     let _ = collection.insert_one(league, None);
+    // }
+    //
+    // fn create_season(&mut self, season: &Season) {
+    //     let seasons = seasons_collection(self);
+    //     let _ = seasons.insert_one(season, None);
+    //
+    //     // // Add the seasons to the list of seasons
+    //     // let league = self.get_league(&season.league_id).unwrap();
+    //     // let mut seasons = league.seasons;
+    //     // seasons.push(season.league_id);
+    //     //
+    //     // let _update_result = leagues.update_one(
+    //     //     doc! {
+    //     //         "_id": league.id
+    //     //     },
+    //     //     doc! {
+    //     //         "$set": { "seasons": seasons }
+    //     //     },
+    //     //     None,
+    //     // );
+    // }
+    //
+    // fn create_session(&mut self, session: &Session) {
+    //     let sessions = sessions_collection(self);
+    //     let _ = sessions.insert_one(session, None);
+    // }
+    //
+    // fn create_round(&mut self, round: &Round) {
+    //     let rounds = round_collection(self);
+    //     let _ = rounds.insert_one(round, None);
+    // }
+    //
+    // fn create_match(&mut self, a_match: &Match) {
+    //     let matches = match_collection(self);
+    //     let _ = matches.insert_one(a_match, None);
+    // }
+    //
+    // fn create_venue(&mut self, venue: &Venue) {
+    //     let venues = venue_collection(self);
+    //     let _ = venues.insert_one(venue, None);
+    // }
+    //
+    // fn get_league(&self, league_id: &LeagueId) -> Option<League> {
+    //     let leagues = leagues_collection(self);
+    //     let result = leagues.find_one(
+    //         doc! {
+    //             "_id": league_id
+    //         },
+    //         None,
+    //     );
+    //     result.unwrap()
+    // }
+    //
+    // fn get_league_by_name(&self, league_name: &str) -> Option<League> {
+    //     let leagues = leagues_collection(self);
+    //     let result = leagues.find_one(
+    //         doc! {
+    //             "name": league_name
+    //         },
+    //         None,
+    //     );
+    //     result.unwrap()
+    // }
+    //
+    // fn get_season(&self, season_id: &SeasonId) -> Option<Season> {
+    //     let seasons = seasons_collection(self);
+    //     let result = seasons.find_one(
+    //         doc! {
+    //             "_id": season_id
+    //         },
+    //         None,
+    //     );
+    //     result.unwrap()
+    // }
+
+    async fn list_leagues(&self) -> Vec<League> {
         let collection = leagues_collection(self);
-
-        // TODO: Return some kind of error when failing to insert a document,
-        // for example; when inserting a duplicate entry.
-        let _ = collection.insert_one(league, None);
-    }
-
-    fn create_season(&mut self, season: &Season) {
-        let seasons = seasons_collection(self);
-        let _ = seasons.insert_one(season, None);
-
-        // // Add the seasons to the list of seasons
-        // let league = self.get_league(&season.league_id).unwrap();
-        // let mut seasons = league.seasons;
-        // seasons.push(season.league_id);
-        //
-        // let _update_result = leagues.update_one(
-        //     doc! {
-        //         "_id": league.id
-        //     },
-        //     doc! {
-        //         "$set": { "seasons": seasons }
-        //     },
-        //     None,
-        // );
-    }
-
-    fn create_session(&mut self, session: &Session) {
-        let sessions = sessions_collection(self);
-        let _ = sessions.insert_one(session, None);
-    }
-
-    fn create_round(&mut self, round: &Round) {
-        let rounds = round_collection(self);
-        let _ = rounds.insert_one(round, None);
-    }
-
-    fn create_match(&mut self, a_match: &Match) {
-        let matches = match_collection(self);
-        let _ = matches.insert_one(a_match, None);
-    }
-
-    fn create_venue(&mut self, venue: &Venue) {
-        let venues = venue_collection(self);
-        let _ = venues.insert_one(venue, None);
-    }
-
-    fn get_league(&self, league_id: &LeagueId) -> Option<League> {
-        let leagues = leagues_collection(self);
-        let result = leagues.find_one(
-            doc! {
-                "_id": league_id
-            },
-            None,
-        );
-        result.unwrap()
-    }
-
-    fn get_league_by_name(&self, league_name: &str) -> Option<League> {
-        let leagues = leagues_collection(self);
-        let result = leagues.find_one(
-            doc! {
-                "name": league_name
-            },
-            None,
-        );
-        result.unwrap()
-    }
-
-    fn get_season(&self, season_id: &SeasonId) -> Option<Season> {
-        let seasons = seasons_collection(self);
-        let result = seasons.find_one(
-            doc! {
-                "_id": season_id
-            },
-            None,
-        );
-        result.unwrap()
-    }
-
-    fn list_leagues(&self) -> Vec<League> {
-        let collection = leagues_collection(self);
-        let result = collection.find(None, None);
+        let result = collection.find(None, None).await;
 
         match result {
-            Ok(cursor) => cursor
-                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-                .collect(),
+            Ok(cursor) => {
+                let leagues: Vec<Result<League>> = cursor.collect().await;
+                leagues
+                    .into_iter()
+                    .filter_map(|x| x.ok())
+                    .collect::<Vec<League>>()
+            }
             Err(error) => {
                 println!("Error finding leagues, {:?}", error);
                 Vec::new()
@@ -185,81 +191,81 @@ impl WriteableStore for MongoStore {
         }
     }
 
-    fn list_seasons(&self) -> Vec<Season> {
-        let collection = seasons_collection(self);
-        let result = collection.find(None, None);
+    // fn list_seasons(&self) -> Vec<Season> {
+    //     let collection = seasons_collection(self);
+    //     let result = collection.find(None, None);
+    //
+    //     match result {
+    //         Ok(cursor) => cursor
+    //             .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+    //             .collect(),
+    //         Err(error) => {
+    //             println!("Error finding seasons, {:?}", error);
+    //             Vec::new()
+    //         }
+    //     }
+    // }
+    //
+    // fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+    //     let collection = seasons_collection(self);
+    //     let result = collection.find(
+    //         doc! {
+    //             "league_id": league_id
+    //         },
+    //         None,
+    //     );
+    //
+    //     match result {
+    //         Ok(cursor) => cursor
+    //             .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+    //             .collect(),
+    //         Err(error) => {
+    //             println!(
+    //                 "Error finding seasons for league '{:?}', {:?}",
+    //                 league_id, error
+    //             );
+    //             Vec::new()
+    //         }
+    //     }
+    // }
 
-        match result {
-            Ok(cursor) => cursor
-                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-                .collect(),
-            Err(error) => {
-                println!("Error finding seasons, {:?}", error);
-                Vec::new()
-            }
-        }
-    }
+    // fn list_sessions(&self) -> Vec<Session> {
+    //     let collection = sessions_collection(self);
+    //     let result = collection.find(None, None);
+    //
+    //     match result {
+    //         Ok(cursor) => cursor
+    //             .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+    //             .collect(),
+    //         Err(error) => {
+    //             println!("Error finding sessions, {:?}", error);
+    //             Vec::new()
+    //         }
+    //     }
+    // }
 
-    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
-        let collection = seasons_collection(self);
-        let result = collection.find(
-            doc! {
-                "league_id": league_id
-            },
-            None,
-        );
-
-        match result {
-            Ok(cursor) => cursor
-                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-                .collect(),
-            Err(error) => {
-                println!(
-                    "Error finding seasons for league '{:?}', {:?}",
-                    league_id, error
-                );
-                Vec::new()
-            }
-        }
-    }
-
-    fn list_sessions(&self) -> Vec<Session> {
-        let collection = sessions_collection(self);
-        let result = collection.find(None, None);
-
-        match result {
-            Ok(cursor) => cursor
-                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-                .collect(),
-            Err(error) => {
-                println!("Error finding sessions, {:?}", error);
-                Vec::new()
-            }
-        }
-    }
-
-    fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session> {
-        let collection = sessions_collection(self);
-        let result = collection.find(
-            doc! {
-                "season_id": season_id
-            },
-            None,
-        );
-
-        match result {
-            Ok(cursor) => cursor
-                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-                .collect(),
-            Err(error) => {
-                println!(
-                    "Error finding seasons for league '{:?}', {:?}",
-                    season_id, error
-                );
-                Vec::new()
-            }
-        }
-    }
+    // async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session> {
+    //     let collection = sessions_collection(self);
+    //     let result = collection
+    //         .find(
+    //             doc! {
+    //                 "season_id": season_id
+    //             },
+    //             None,
+    //         )
+    //         .await;
+    //
+    //     match result {
+    //         Ok(cursor) => Ok(cursor.filter(|x| x.ok()).collect()),
+    //         Err(error) => {
+    //             println!(
+    //                 "Error finding seasons for league '{:?}', {:?}",
+    //                 season_id, error
+    //             );
+    //             Ok(Vec::new())
+    //         }
+    //     }
+    // }
 }
 
 impl Drop for MongoStore {

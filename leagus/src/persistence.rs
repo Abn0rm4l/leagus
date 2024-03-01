@@ -7,37 +7,37 @@ use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, V
 pub trait WriteableStore {
     // TODO: These should return an option in case of failure.
 
-    /// Create a new League.
-    fn create_league(&mut self, league: League);
-
-    /// Create a new [`Season`] season
-    fn create_season(&mut self, season: &Season);
-
-    /// .
-    fn create_session(&mut self, session: &Session);
-
-    fn create_round(&mut self, round: &Round);
-
-    fn create_match(&mut self, a_match: &Match);
-
-    fn create_venue(&mut self, venue: &Venue);
-
-    /// Get the League from the store with the matching ID.
-    fn get_league(&self, league_id: &LeagueId) -> Option<League>;
-
-    /// Get [`League`] by name.
-    fn get_league_by_name(&self, league_name: &str) -> Option<League>;
-
-    /// Get [`Season`] by id
-    fn get_season(&self, season_id: &SeasonId) -> Option<Season>;
+    // /// Create a new League.
+    // async fn create_league(&mut self, league: League);
+    //
+    // /// Create a new [`Season`] season
+    // async fn create_season(&mut self, season: &Season);
+    //
+    // /// .
+    // async fn create_session(&mut self, session: &Session);
+    //
+    // async fn create_round(&mut self, round: &Round);
+    //
+    // async fn create_match(&mut self, a_match: &Match);
+    //
+    // async fn create_venue(&mut self, venue: &Venue);
+    //
+    // /// Get the League from the store with the matching ID.
+    // async fn get_league(&self, league_id: &LeagueId) -> Option<League>;
+    //
+    // /// Get [`League`] by name.
+    // async fn get_league_by_name(&self, league_name: &str) -> Option<League>;
+    //
+    // /// Get [`Season`] by id
+    // async fn get_season(&self, season_id: &SeasonId) -> Option<Season>;
 
     /// List all the leagues
-    fn list_leagues(&self) -> Vec<League>;
+    async fn list_leagues(&self) -> Vec<League>;
 
-    /// List all the seasons
-    fn list_seasons(&self) -> Vec<Season>;
-    fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season>;
-
-    fn list_sessions(&self) -> Vec<Session>;
-    fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
+    // /// List all the seasons
+    // async fn list_seasons(&self) -> Vec<Season>;
+    // async fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season>;
+    //
+    // async fn list_sessions(&self) -> Vec<Session>;
+    // async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
 }
