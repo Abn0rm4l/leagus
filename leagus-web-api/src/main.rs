@@ -1,11 +1,12 @@
 use axum::Router;
-use handlers::{api, leagues, matches, seasons, sessions, venues};
+use handlers::{api, leagues, matches, root, seasons, sessions, venues};
 
 mod handlers;
 
 #[tokio::main]
 async fn main() {
     let app = Router::new()
+        .nest("/", root::routes())
         .nest("/api", api::routes())
         .nest("/leagues", leagues::routes())
         .nest("/seasons", seasons::routes())

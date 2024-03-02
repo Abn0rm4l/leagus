@@ -52,7 +52,7 @@ pub struct Season {
     pub end: DateTime<Utc>,
 
     #[serde(default)]
-    pub name: Option<String>,
+    pub name: String,
     // TODO: add table
     // TODO: add scoring system
     // TODO: add participants (pool of players available for the season)
@@ -64,7 +64,7 @@ impl Season {
         league: &LeagueId,
         start: &DateTime<Utc>,
         end: &DateTime<Utc>,
-        name: Option<String>,
+        name: &str,
     ) -> Season {
         // TODO check start date is before end date.
         Season {
@@ -72,7 +72,7 @@ impl Season {
             league_id: *league,
             start: *start,
             end: *end,
-            name,
+            name: name.to_string(),
         }
     }
 }
