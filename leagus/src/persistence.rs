@@ -4,23 +4,29 @@ pub mod sync;
 use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, Venue};
 
 /// Defines interactions with a write store.
+///
+// See https://doc.rust-lang.org/rustc/lints/listing/warn-by-default.html?highlight=async%20fn#async-fn-in-trait
+#[allow(async_fn_in_trait)]
 pub trait WriteableStore {
     // TODO: These should return an option in case of failure.
 
-    // /// Create a new League.
-    // async fn create_league(&mut self, league: League);
-    //
-    // /// Create a new [`Season`] season
-    // async fn create_season(&mut self, season: &Season);
-    //
-    // /// .
-    // async fn create_session(&mut self, session: &Session);
-    //
-    // async fn create_round(&mut self, round: &Round);
-    //
-    // async fn create_match(&mut self, a_match: &Match);
-    //
-    // async fn create_venue(&mut self, venue: &Venue);
+    /// Create a new [`League`].
+    async fn create_league(&mut self, league: League);
+
+    /// Create a new [`Season`].
+    async fn create_season(&mut self, season: &Season);
+
+    /// Create a new [`Session`].
+    async fn create_session(&mut self, session: &Session);
+
+    /// Create a new [`Round`].
+    async fn create_round(&mut self, round: &Round);
+
+    /// Create a new [`Match`].
+    async fn create_match(&mut self, a_match: &Match);
+
+    /// Create a new [`Venue`].
+    async fn create_venue(&mut self, venue: &Venue);
 
     /// Get the [`League`] from the store with the matching ID.
     async fn get_league(&self, league_id: &LeagueId) -> Option<League>;

@@ -1,6 +1,4 @@
-use std::result;
-
-use futures::stream::{StreamExt, TryStreamExt};
+use futures::stream::StreamExt;
 use mongodb::error::Result;
 use mongodb::options::ClientOptions;
 use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
@@ -91,53 +89,53 @@ impl MongoStore {
 }
 
 impl WriteableStore for MongoStore {
-    // fn create_league(&mut self, league: League) {
-    //     let collection = leagues_collection(self);
-    //
-    //     // TODO: Return some kind of error when failing to insert a document,
-    //     // for example; when inserting a duplicate entry.
-    //     let _ = collection.insert_one(league, None);
-    // }
-    //
-    // fn create_season(&mut self, season: &Season) {
-    //     let seasons = seasons_collection(self);
-    //     let _ = seasons.insert_one(season, None);
-    //
-    //     // // Add the seasons to the list of seasons
-    //     // let league = self.get_league(&season.league_id).unwrap();
-    //     // let mut seasons = league.seasons;
-    //     // seasons.push(season.league_id);
-    //     //
-    //     // let _update_result = leagues.update_one(
-    //     //     doc! {
-    //     //         "_id": league.id
-    //     //     },
-    //     //     doc! {
-    //     //         "$set": { "seasons": seasons }
-    //     //     },
-    //     //     None,
-    //     // );
-    // }
-    //
-    // fn create_session(&mut self, session: &Session) {
-    //     let sessions = sessions_collection(self);
-    //     let _ = sessions.insert_one(session, None);
-    // }
-    //
-    // fn create_round(&mut self, round: &Round) {
-    //     let rounds = round_collection(self);
-    //     let _ = rounds.insert_one(round, None);
-    // }
-    //
-    // fn create_match(&mut self, a_match: &Match) {
-    //     let matches = match_collection(self);
-    //     let _ = matches.insert_one(a_match, None);
-    // }
-    //
-    // fn create_venue(&mut self, venue: &Venue) {
-    //     let venues = venue_collection(self);
-    //     let _ = venues.insert_one(venue, None);
-    // }
+    async fn create_league(&mut self, league: League) {
+        let collection = leagues_collection(self);
+
+        // TODO: Return some kind of error when failing to insert a document,
+        // for example; when inserting a duplicate entry.
+        let _ = collection.insert_one(league, None).await;
+    }
+
+    async fn create_season(&mut self, season: &Season) {
+        let seasons = seasons_collection(self);
+        let _ = seasons.insert_one(season, None).await;
+
+        // // Add the seasons to the list of seasons
+        // let league = self.get_league(&season.league_id).unwrap();
+        // let mut seasons = league.seasons;
+        // seasons.push(season.league_id);
+        //
+        // let _update_result = leagues.update_one(
+        //     doc! {
+        //         "_id": league.id
+        //     },
+        //     doc! {
+        //         "$set": { "seasons": seasons }
+        //     },
+        //     None,
+        // );
+    }
+
+    async fn create_session(&mut self, session: &Session) {
+        let sessions = sessions_collection(self);
+        let _ = sessions.insert_one(session, None).await;
+    }
+
+    async fn create_round(&mut self, round: &Round) {
+        let rounds = round_collection(self);
+        let _ = rounds.insert_one(round, None).await;
+    }
+
+    async fn create_match(&mut self, a_match: &Match) {
+        let matches = match_collection(self);
+        let _ = matches.insert_one(a_match, None).await;
+    }
+
+    async fn create_venue(&mut self, venue: &Venue) {
+        let venues = venue_collection(self);
+        let _ = venues.insert_one(venue, None).await;
+    }
 
     async fn get_league(&self, league_id: &LeagueId) -> Option<League> {
         let leagues = leagues_collection(self);
