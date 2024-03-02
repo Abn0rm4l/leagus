@@ -35,9 +35,9 @@ pub trait WriteableStore {
     async fn list_leagues(&self) -> Vec<League>;
 
     // /// List all the seasons
-    // async fn list_seasons(&self) -> Vec<Season>;
-    // async fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season>;
-    //
-    // async fn list_sessions(&self) -> Vec<Session>;
-    // async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
+    async fn list_seasons(&self) -> Vec<Season>;
+    async fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season>;
+
+    async fn list_sessions(&self) -> Vec<Session>;
+    async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
 }

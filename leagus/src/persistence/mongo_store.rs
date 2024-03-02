@@ -177,13 +177,10 @@ impl WriteableStore for MongoStore {
         let result = collection.find(None, None).await;
 
         match result {
-            Ok(cursor) => {
-                let leagues: Vec<Result<League>> = cursor.collect().await;
-                leagues
-                    .into_iter()
-                    .filter_map(|x| x.ok())
-                    .collect::<Vec<League>>()
-            }
+            Ok(cursor) => (cursor.collect::<Vec<Result<League>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok())
+                .collect::<Vec<League>>(),
             Err(error) => {
                 println!("Error finding leagues, {:?}", error);
                 Vec::new()
@@ -191,81 +188,89 @@ impl WriteableStore for MongoStore {
         }
     }
 
-    // fn list_seasons(&self) -> Vec<Season> {
-    //     let collection = seasons_collection(self);
-    //     let result = collection.find(None, None);
-    //
-    //     match result {
-    //         Ok(cursor) => cursor
-    //             .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-    //             .collect(),
-    //         Err(error) => {
-    //             println!("Error finding seasons, {:?}", error);
-    //             Vec::new()
-    //         }
-    //     }
-    // }
-    //
-    // fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
-    //     let collection = seasons_collection(self);
-    //     let result = collection.find(
-    //         doc! {
-    //             "league_id": league_id
-    //         },
-    //         None,
-    //     );
-    //
-    //     match result {
-    //         Ok(cursor) => cursor
-    //             .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-    //             .collect(),
-    //         Err(error) => {
-    //             println!(
-    //                 "Error finding seasons for league '{:?}', {:?}",
-    //                 league_id, error
-    //             );
-    //             Vec::new()
-    //         }
-    //     }
-    // }
+    async fn list_seasons(&self) -> Vec<Season> {
+        let collection = seasons_collection(self);
+        let result = collection.find(None, None).await;
 
-    // fn list_sessions(&self) -> Vec<Session> {
-    //     let collection = sessions_collection(self);
-    //     let result = collection.find(None, None);
-    //
-    //     match result {
-    //         Ok(cursor) => cursor
-    //             .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
-    //             .collect(),
-    //         Err(error) => {
-    //             println!("Error finding sessions, {:?}", error);
-    //             Vec::new()
-    //         }
-    //     }
-    // }
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Season>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out failures
+                .collect::<Vec<Season>>(),
+            Err(error) => {
+                println!("Error finding seasons, {:?}", error);
+                Vec::new()
+            }
+        }
+    }
 
-    // async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session> {
-    //     let collection = sessions_collection(self);
-    //     let result = collection
-    //         .find(
-    //             doc! {
-    //                 "season_id": season_id
-    //             },
-    //             None,
-    //         )
-    //         .await;
-    //
-    //     match result {
-    //         Ok(cursor) => Ok(cursor.filter(|x| x.ok()).collect()),
-    //         Err(error) => {
-    //             println!(
-    //                 "Error finding seasons for league '{:?}', {:?}",
-    //                 season_id, error
-    //             );
-    //             Ok(Vec::new())
-    //         }
-    //     }
-    // }
+    async fn list_seasons_for_league(&self, league_id: &LeagueId) -> Vec<Season> {
+        let collection = seasons_collection(self);
+        let result = collection
+            .find(
+                doc! {
+                    "league_id": league_id
+                },
+                None,
+            )
+            .await;
+
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Season>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!(
+                    "Error finding seasons for league '{:?}', {:?}",
+                    league_id, error
+                );
+                Vec::new()
+            }
+        }
+    }
+
+    async fn list_sessions(&self) -> Vec<Session> {
+        let collection = sessions_collection(self);
+        let result = collection.find(None, None).await;
+
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Session>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!("Error finding sessions, {:?}", error);
+                Vec::new()
+            }
+        }
+    }
+
+    async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session> {
+        let collection = sessions_collection(self);
+        let result = collection
+            .find(
+                doc! {
+                    "season_id": season_id
+                },
+                None,
+            )
+            .await;
+
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Session>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!(
+                    "Error finding seasons for league '{:?}', {:?}",
+                    season_id, error
+                );
+                Vec::new()
+            }
+        }
+    }
 }
 
 impl Drop for MongoStore {
