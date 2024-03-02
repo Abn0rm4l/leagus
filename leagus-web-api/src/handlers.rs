@@ -1,3 +1,4 @@
+pub mod api;
 pub mod leagues;
 pub mod matches;
 pub mod seasons;
