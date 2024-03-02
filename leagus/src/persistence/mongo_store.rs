@@ -138,39 +138,39 @@ impl WriteableStore for MongoStore {
     //     let venues = venue_collection(self);
     //     let _ = venues.insert_one(venue, None);
     // }
-    //
-    // fn get_league(&self, league_id: &LeagueId) -> Option<League> {
-    //     let leagues = leagues_collection(self);
-    //     let result = leagues.find_one(
-    //         doc! {
-    //             "_id": league_id
-    //         },
-    //         None,
-    //     );
-    //     result.unwrap()
-    // }
-    //
-    // fn get_league_by_name(&self, league_name: &str) -> Option<League> {
-    //     let leagues = leagues_collection(self);
-    //     let result = leagues.find_one(
-    //         doc! {
-    //             "name": league_name
-    //         },
-    //         None,
-    //     );
-    //     result.unwrap()
-    // }
-    //
-    // fn get_season(&self, season_id: &SeasonId) -> Option<Season> {
-    //     let seasons = seasons_collection(self);
-    //     let result = seasons.find_one(
-    //         doc! {
-    //             "_id": season_id
-    //         },
-    //         None,
-    //     );
-    //     result.unwrap()
-    // }
+
+    async fn get_league(&self, league_id: &LeagueId) -> Option<League> {
+        let leagues = leagues_collection(self);
+        let result = leagues.find_one(
+            doc! {
+                "_id": league_id
+            },
+            None,
+        );
+        result.await.ok().unwrap_or_default()
+    }
+
+    async fn get_league_by_name(&self, league_name: &str) -> Option<League> {
+        let leagues = leagues_collection(self);
+        let result = leagues.find_one(
+            doc! {
+                "name": league_name
+            },
+            None,
+        );
+        result.await.ok().unwrap_or_default()
+    }
+
+    async fn get_season(&self, season_id: &SeasonId) -> Option<Season> {
+        let seasons = seasons_collection(self);
+        let result = seasons.find_one(
+            doc! {
+                "_id": season_id
+            },
+            None,
+        );
+        result.await.ok().unwrap_or_default()
+    }
 
     async fn list_leagues(&self) -> Vec<League> {
         let collection = leagues_collection(self);

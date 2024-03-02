@@ -21,15 +21,15 @@ pub trait WriteableStore {
     // async fn create_match(&mut self, a_match: &Match);
     //
     // async fn create_venue(&mut self, venue: &Venue);
-    //
-    // /// Get the League from the store with the matching ID.
-    // async fn get_league(&self, league_id: &LeagueId) -> Option<League>;
-    //
-    // /// Get [`League`] by name.
-    // async fn get_league_by_name(&self, league_name: &str) -> Option<League>;
-    //
-    // /// Get [`Season`] by id
-    // async fn get_season(&self, season_id: &SeasonId) -> Option<Season>;
+
+    /// Get the [`League`] from the store with the matching ID.
+    async fn get_league(&self, league_id: &LeagueId) -> Option<League>;
+
+    /// Get [`League`] by name.
+    async fn get_league_by_name(&self, league_name: &str) -> Option<League>;
+
+    /// Get [`Season`] by id
+    async fn get_season(&self, season_id: &SeasonId) -> Option<Season>;
 
     /// List all the leagues
     async fn list_leagues(&self) -> Vec<League>;
