@@ -36,16 +36,19 @@ impl MongoStore {
     }
 
     /// Bootstrap the MongoDB databases and collections
-    pub fn bootstrap(&mut self) {
-        self.bootstrap_leagues();
-        self.bootstrap_seasons();
-        self.bootstrap_sessions();
-        self.bootstrap_rounds();
-        self.bootstrap_matches();
+    pub async fn bootstrap(&mut self) {
+        let league = self.bootstrap_leagues();
+        let seasons = self.bootstrap_seasons();
+        let sessions = self.bootstrap_sessions();
+        let rounds = self.bootstrap_rounds();
+        let matches = self.bootstrap_matches();
+
+        // advance all asynchronously then wait for them to complete
+        futures::join!(league, seasons, sessions, rounds, matches);
     }
 
     /// Bootstrap the leagues collection
-    fn bootstrap_leagues(&mut self) {
+    async fn bootstrap_leagues(&self) {
         let collection = leagues_collection(self);
 
         let opts = IndexOptions::builder().unique(true).build();
@@ -56,35 +59,35 @@ impl MongoStore {
             .options(opts)
             .build();
 
-        let _ = collection.create_index(index, None);
+        let _ = collection.create_index(index, None).await;
     }
 
     /// Bootstrap the seasons collection
-    fn bootstrap_seasons(&mut self) {
+    async fn bootstrap_seasons(&self) {
         let collection = seasons_collection(self);
         let index = IndexModel::builder().keys(doc! {"league_id": 1}).build();
-        let _ = collection.create_index(index, None);
+        let _ = collection.create_index(index, None).await;
     }
 
     /// Bootstrap the sessions collection
-    fn bootstrap_sessions(&mut self) {
+    async fn bootstrap_sessions(&self) {
         let collection = sessions_collection(self);
         let index = IndexModel::builder().keys(doc! {"season_id": 1}).build();
-        let _ = collection.create_index(index, None);
+        let _ = collection.create_index(index, None).await;
     }
 
     /// Bootstrap the rounds collection
-    fn bootstrap_rounds(&mut self) {
+    async fn bootstrap_rounds(&self) {
         let collection = round_collection(self);
         let index = IndexModel::builder().keys(doc! {"session_id": 1}).build();
-        let _ = collection.create_index(index, None);
+        let _ = collection.create_index(index, None).await;
     }
 
     /// Bootstrap the matches collection
-    fn bootstrap_matches(&mut self) {
+    async fn bootstrap_matches(&self) {
         let collection = match_collection(self);
         let index = IndexModel::builder().keys(doc! {"round_id": 1}).build();
-        let _ = collection.create_index(index, None);
+        let _ = collection.create_index(index, None).await;
     }
 }
 
@@ -271,13 +274,14 @@ impl WriteableStore for MongoStore {
     }
 }
 
-impl Drop for MongoStore {
-    fn drop(&mut self) {
-        // To cleanly close our connections we need to shutdown the sync client.
-        let client = self.client.clone();
-        client.shutdown();
-    }
-}
+// TODO: Check if this is needed with the async client?
+// impl Drop for MongoStore {
+//     fn drop(&mut self) {
+//         // To cleanly close our connections we need to shutdown the sync client.
+//         let client = self.client.clone();
+//         client.shutdown();
+//     }
+// }
 
 /// Return a handle to the MongoDB League Collection
 fn leagues_collection(store: &MongoStore) -> Collection<League> {
