@@ -1,49 +1,66 @@
-<div class="text-sm breadcrumbs">
-  <ul>
-    <li hx-boost="true" hx-target="#content">
-      <a href="/leagues">Leagues</a>
-    </li>
-    <li>{{ league.name }}</li>
-  </ul>
-</div>
+<div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+  <div class="text-sm breadcrumbs">
+    <ul>
+      <li hx-boost="true" hx-target="#content">
+        <a href="/leagues">Leagues</a>
+      </li>
+      <li>{{ league.name }}</li>
+    </ul>
+  </div>
 
-<div class="divider divider-start">Details</div>
+  <div class="divider divider-start">Details</div>
+  <div class="overflow-x-auto container shadow ml-2 rounded bg-slate-200">
+    <table class="table-sm">
+      <tbody>
+        <tr>
+          <th>Name</th>
+          <td>{{ league.name }}</td>
+        </tr>
+        <tr>
+          <th>Description</th>
+          <td>{{ league.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<div class="overflow-x-auto">
-  <table class="table-sm">
-    <tbody>
-      <tr>
-        <th>Name</th>
-        <td>{{ league.name }}</td>
-      </tr>
-      <tr>
-        <th>Description</th>
-        <td>{{ league.description }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="divider divider-start">Seasons</div>
-<div class="overflow-x-auto">
-  <table class="table-xs">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for season in seasons %}
-      <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="main">
-        <th>{{ loop.index }}</th>
-        <td>{{ season.name }}</td>
-        <td>{{ season.start }}</td>
-        <td>{{ season.end }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="divider divider-start">Seasons</div>
+  <div class="overflow-x-auto container shadow ml-2 rounded">
+    <table class="table-xs">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for season in seasons %}
+        <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="main">
+          <th>{{ loop.index }}</th>
+          <td>{{ season.name }}</td>
+          <td>{{ season.start }}</td>
+          <td>{{ season.end }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button
+      id="new-season-btn"
+      hx-get="/seasons/create"
+      hx-target="#new-season-modal"
+      hx-swap="outerHtml"
+      class="w-full py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+    >
+      Create New Season
+    </button>
+    <dialog
+      id="new-season-modal"
+      _="on click from #new-season-btn call my.showModal()
+      on closeModal call my.close()"
+    >
+      Placeholder
+    </dialog>
+  </div>
 </div>
