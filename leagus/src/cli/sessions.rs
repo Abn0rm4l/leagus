@@ -72,7 +72,7 @@ fn list(_matches: &ArgMatches) {
     let store = MongoStore::new();
     let seasons = store.list_seasons();
     for season in seasons {
-        println!("Season: {}", season.name.unwrap_or(season.id.to_string()));
+        println!("Season: {} ({})", season.name, season.id.to_string());
         let sessions = store.list_sessions_for_season(&season.id);
         for season in sessions {
             println!("\t- {:?}", season);

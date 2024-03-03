@@ -64,7 +64,8 @@ fn create(matches: &ArgMatches) {
         None => start + TimeDelta::days(30),
     };
 
-    let name = matches.get_one::<String>("name");
+    let default_name = "".to_string();
+    let name = matches.get_one::<String>("name").unwrap_or(&default_name);
 
     let mut store = MongoStore::new();
     let league = store.get_league_by_name(league_name);
@@ -72,9 +73,7 @@ fn create(matches: &ArgMatches) {
     match league {
         Some(league) => {
             println!("Adding new season to {:?}", league);
-
-            let season = Season::new(&league.id, &start, &end, name.cloned());
-
+            let season = Season::new(&league.id, &start, &end, name);
             store.create_season(&season);
         }
         None => println!("Cannot find league with name \"{}\".", league_name),
