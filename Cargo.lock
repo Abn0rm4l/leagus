@@ -976,6 +976,7 @@ dependencies = [
  "bson",
  "chrono",
  "leagus",
+ "serde",
  "serde_json",
  "tokio",
  "tower-http",

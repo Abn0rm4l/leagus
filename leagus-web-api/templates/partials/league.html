@@ -50,14 +50,14 @@
     <!-- hx-swap="outerHtml" -->
     <button
       id="new-season-btn"
-      hx-get="/seasons/create"
-      hx-trigger="click"
+      hx-get="/seasons/create/{{ league.id }}"
+      hx-trigger="click once"
       hx-target="#new-season-modal"
       hx-swap="outerHTML"
-      _="on html:afterSwap send showModal to #new-season-modal"
+      _="on click send showModal to #new-season-modal"
       class="w-full py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
     >
-      Create New Season
+      New Season
     </button>
     <dialog id="new-season-modal">
       <div
