@@ -48,17 +48,28 @@ async fn get_by_id(
     HxBoosted(boosted): HxBoosted,
     Path(league_id): Path<Uuid>,
 ) -> Html<String> {
-    if !boosted && !hxrequest {
-        return Html("".to_string());
-    }
-
     // TODO: Don't create a new MongoStore every request
     let store = MongoStore::new().await.unwrap();
     let league = store.get_league(&league_id).await;
     let seasons = store.list_seasons_for_league(&league_id).await;
 
     match league {
-        Some(league) => Html(LeagueTemplate { league, seasons }.to_string()),
+        Some(league) => {
+            if boosted || hxrequest {
+                Html(LeagueContentTemplate { league, seasons }.to_string())
+            } else {
+                Html(
+                    LeagueTemplate {
+                        title: "League",
+                        name: "Name?",
+                        headings: vec!["Leagues", "Players", "Tables"],
+                        league,
+                        seasons,
+                    }
+                    .to_string(),
+                )
+            }
+        }
         None => Html("League not found".to_string()),
     }
 }
@@ -83,8 +94,18 @@ struct LeaguesPartialTemplate<'a> {
 }
 
 #[derive(Template)]
-#[template(path = "partials/league.html")]
-struct LeagueTemplate {
+#[template(path = "partials/leagues/single_content.html")]
+struct LeagueContentTemplate {
+    league: League,
+    seasons: Vec<Season>,
+}
+
+#[derive(Template)]
+#[template(path = "league.html")]
+struct LeagueTemplate<'a> {
+    title: &'a str,
+    name: &'a str,
+    headings: Vec<&'a str>,
     league: League,
     seasons: Vec<Season>,
 }
