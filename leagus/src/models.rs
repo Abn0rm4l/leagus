@@ -25,7 +25,7 @@ pub struct League {
     pub description: String,
 
     #[serde(default)]
-    pub seasons: Vec<SeasonId>,
+    pub active_season: Option<SeasonId>,
 }
 
 impl League {
@@ -35,7 +35,7 @@ impl League {
             id: LeagueId::new(),
             name: String::from(name),
             description: String::from(description),
-            seasons: Vec::new(),
+            active_season: None,
         }
     }
 }
@@ -53,9 +53,10 @@ pub struct Season {
 
     #[serde(default)]
     pub name: String,
-    // TODO: add table
+
+    pub table: SeasonTable,
     // TODO: add scoring system
-    // TODO: add participants (pool of players available for the season)
+    // TODO: add participants (pool of players available for the season)?
 }
 
 impl Season {
@@ -73,8 +74,27 @@ impl Season {
             start: *start,
             end: *end,
             name: name.to_string(),
+            table: SeasonTable {
+                entries: Vec::new(),
+            },
         }
     }
+}
+
+/// A score table for the season
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub struct SeasonTable {
+    #[serde(default)]
+    entries: Vec<SeasonTableEntry>,
+}
+
+/// A single entry in the scoring table
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+struct SeasonTableEntry {
+    participant: ParticipantId,
+    points: u32,
+    wins: u32,
+    losses: u32,
 }
 
 /// A session of a season.

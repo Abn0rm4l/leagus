@@ -40,13 +40,13 @@ pub async fn get_create_season(Path(league_id): Path<Uuid>) -> Html<String> {
 
 pub async fn post_create_season(
     Path(league_id): Path<Uuid>,
-    Form(create_season): Form<CreateSeasonInput>,
+    Form(input): Form<CreateSeasonInput>,
 ) -> Html<String> {
     // TODO: Maybe store these as NaiveDate, I don't think any value is gained from having it as
     // DateTime?
 
     // Try parse the Date, if that doesn't work use Utc::now.
-    let start = NaiveDate::parse_from_str(&create_season.start_date, "%Y-%m-%d");
+    let start = NaiveDate::parse_from_str(&input.start_date, "%Y-%m-%d");
     let start = match start {
         Ok(start) => NaiveDateTime::from(start).and_utc(),
         Err(_) => Utc::now().duration_trunc(TimeDelta::days(1)).unwrap(),
@@ -54,7 +54,7 @@ pub async fn post_create_season(
 
     // If no end date is included we set it to +30 days from start
     // TODO: Make end date optional
-    let end = NaiveDate::parse_from_str(&create_season.end_date, "%Y-%m-%d");
+    let end = NaiveDate::parse_from_str(&input.end_date, "%Y-%m-%d");
     let end = match end {
         Ok(end) => NaiveDateTime::from(end).and_utc(),
         Err(_) => (Utc::now() + TimeDelta::days(30))
@@ -62,16 +62,17 @@ pub async fn post_create_season(
             .unwrap(),
     };
 
-    let name = if create_season.season_name.is_empty() {
+    let name = if input.season_name.is_empty() {
         // Default name will be "Month - Year".
         start.format("%B - %Y").to_string()
     } else {
-        create_season.season_name
+        input.season_name
     };
 
     let mut store = MongoStore::new().await.unwrap();
     let season = Season::new(&league_id, &start, &end, &name);
-    store.create_season(&season).await;
+    //TODO: read from input
+    store.create_season(&season, input.make_active).await;
 
     //TODO: return something more useful
     Html(format!("{:?}", season))
@@ -91,6 +92,6 @@ pub struct CreateSeasonInput {
     start_date: String,
     #[serde(default)]
     end_date: String,
-    // #[serde(default)]
-    // make_current: bool,
+    #[serde(default)]
+    make_active: bool,
 }

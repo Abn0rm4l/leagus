@@ -14,7 +14,7 @@ pub trait WriteableStore {
     async fn create_league(&mut self, league: League);
 
     /// Create a new [`Season`].
-    async fn create_season(&mut self, season: &Season);
+    async fn create_season(&mut self, season: &Season, make_active: bool);
 
     /// Create a new [`Session`].
     async fn create_session(&mut self, session: &Session);

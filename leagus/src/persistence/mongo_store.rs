@@ -100,24 +100,24 @@ impl WriteableStore for MongoStore {
         let _ = collection.insert_one(league, None).await;
     }
 
-    async fn create_season(&mut self, season: &Season) {
+    async fn create_season(&mut self, season: &Season, make_active: bool) {
         let seasons = seasons_collection(self);
         let _ = seasons.insert_one(season, None).await;
 
-        // // Add the seasons to the list of seasons
-        // let league = self.get_league(&season.league_id).unwrap();
-        // let mut seasons = league.seasons;
-        // seasons.push(season.league_id);
-        //
-        // let _update_result = leagues.update_one(
-        //     doc! {
-        //         "_id": league.id
-        //     },
-        //     doc! {
-        //         "$set": { "seasons": seasons }
-        //     },
-        //     None,
-        // );
+        if make_active {
+            let leagues = leagues_collection(self);
+            let _update_result = leagues
+                .update_one(
+                    doc! {
+                        "_id": &season.league_id
+                    },
+                    doc! {
+                        "$set": { "active_season": Some(&season.id) }
+                    },
+                    None,
+                )
+                .await;
+        }
     }
 
     async fn create_session(&mut self, session: &Session) {
