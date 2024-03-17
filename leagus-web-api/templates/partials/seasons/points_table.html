@@ -1,0 +1,159 @@
+<div class="flex flex-col">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
+              >
+                Postion
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
+              >
+                Name
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
+              >
+                Points
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
+              >
+                Wins
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
+              >
+                Losses
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            <tr>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                1
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                John Brown
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                45
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                100
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
+              >
+                5
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                2
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                Jim Green
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                27
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                24
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
+              >
+                18
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                3
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                Joe Black
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                31
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                98
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
+              >
+                134
+              </td>
+            </tr>
+
+            {% for entry in season_table.entries %}
+            <tr>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                loop.index
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
+              >
+                entry.name
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                entry.points
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
+              >
+                entry.wins
+              </td>
+              <td
+                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
+              >
+                entry.losses
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

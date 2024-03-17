@@ -85,16 +85,24 @@ impl Season {
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct SeasonTable {
     #[serde(default)]
-    entries: Vec<SeasonTableEntry>,
+    pub entries: Vec<SeasonTableEntry>,
+}
+
+impl SeasonTable {
+    pub fn new() -> SeasonTable {
+        SeasonTable {
+            entries: Vec::new(),
+        }
+    }
 }
 
 /// A single entry in the scoring table
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-struct SeasonTableEntry {
-    participant: ParticipantId,
-    points: u32,
-    wins: u32,
-    losses: u32,
+pub struct SeasonTableEntry {
+    pub participant: ParticipantId,
+    pub points: u32,
+    pub wins: u32,
+    pub losses: u32,
 }
 
 /// A session of a season.

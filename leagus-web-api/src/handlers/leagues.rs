@@ -4,7 +4,7 @@ use axum::response::Html;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
-use leagus::models::{League, Season};
+use leagus::models::{League, Season, SeasonTable};
 use leagus::persistence::mongo_store::MongoStore;
 use leagus::persistence::WriteableStore;
 
@@ -25,7 +25,6 @@ async fn list(HxBoosted(boosted): HxBoosted) -> Html<String> {
         Html(
             LeaguesPartialTemplate {
                 title: "Leagues",
-                name: "Friday Nights",
                 leagues,
             }
             .to_string(),
@@ -34,7 +33,6 @@ async fn list(HxBoosted(boosted): HxBoosted) -> Html<String> {
         Html(
             LeaguesFullTemplate {
                 title: "Leagues",
-                name: "Lionel",
                 headings: vec!["Leagues", "Players", "Tables"],
                 leagues,
             }
@@ -56,15 +54,21 @@ async fn get_by_id(
     match league {
         Some(league) => {
             if boosted || hxrequest {
-                Html(LeagueContentTemplate { league, seasons }.to_string())
+                Html(
+                    LeagueContentTemplate {
+                        league,
+                        seasons,
+                        season_table: SeasonTable::new(),
+                    }
+                    .to_string(),
+                )
             } else {
                 Html(
                     LeagueTemplate {
-                        title: "League",
-                        name: "Name?",
                         headings: vec!["Leagues", "Players", "Tables"],
                         league,
                         seasons,
+                        season_table: SeasonTable::new(),
                     }
                     .to_string(),
                 )
@@ -80,7 +84,6 @@ async fn get_by_id(
 #[template(path = "leagues.html")]
 struct LeaguesFullTemplate<'a> {
     title: &'a str,
-    name: &'a str,
     headings: Vec<&'a str>,
     leagues: Vec<League>,
 }
@@ -89,7 +92,6 @@ struct LeaguesFullTemplate<'a> {
 #[template(path = "partials/leagues_content.html")]
 struct LeaguesPartialTemplate<'a> {
     title: &'a str,
-    name: &'a str,
     leagues: Vec<League>,
 }
 
@@ -98,14 +100,14 @@ struct LeaguesPartialTemplate<'a> {
 struct LeagueContentTemplate {
     league: League,
     seasons: Vec<Season>,
+    season_table: SeasonTable,
 }
 
 #[derive(Template)]
 #[template(path = "league.html")]
 struct LeagueTemplate<'a> {
-    title: &'a str,
-    name: &'a str,
     headings: Vec<&'a str>,
     league: League,
     seasons: Vec<Season>,
+    season_table: SeasonTable,
 }
