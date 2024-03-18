@@ -11,22 +11,22 @@ pub trait WriteableStore {
     // TODO: These should return an option in case of failure.
 
     /// Create a new [`League`].
-    async fn create_league(&mut self, league: League);
+    async fn create_league(&self, league: League);
 
     /// Create a new [`Season`].
-    async fn create_season(&mut self, season: &Season, make_active: bool);
+    async fn create_season(&self, season: &Season, make_active: bool);
 
     /// Create a new [`Session`].
-    async fn create_session(&mut self, session: &Session);
+    async fn create_session(&self, session: &Session);
 
     /// Create a new [`Round`].
-    async fn create_round(&mut self, round: &Round);
+    async fn create_round(&self, round: &Round);
 
     /// Create a new [`Match`].
-    async fn create_match(&mut self, a_match: &Match);
+    async fn create_match(&self, a_match: &Match);
 
     /// Create a new [`Venue`].
-    async fn create_venue(&mut self, venue: &Venue);
+    async fn create_venue(&self, venue: &Venue);
 
     /// Get the [`League`] from the store with the matching ID.
     async fn get_league(&self, league_id: &LeagueId) -> Option<League>;

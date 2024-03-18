@@ -1,9 +1,14 @@
 use std::str::FromStr;
 
 use askama::Template;
-use axum::{extract::Path, response::Html, routing::get, Form, Json, Router};
+use axum::{
+    extract::{Path, State},
+    response::Html,
+    routing::get,
+    Form, Json, Router,
+};
 use bson::Uuid;
-use chrono::{DateTime, DurationRound, NaiveDate, NaiveDateTime, TimeDelta, Utc};
+use chrono::{DurationRound, NaiveDate, NaiveDateTime, TimeDelta, Utc};
 use leagus::{
     models::{League, Season},
     persistence::{mongo_store::MongoStore, WriteableStore},
@@ -11,34 +16,45 @@ use leagus::{
 use serde::Deserialize;
 use serde_json::Value;
 
+use crate::state::AppState;
+
 /// Routes available for '/seasons' path.
-pub fn routes() -> Router {
-    Router::new().route("/", get(list)).route(
-        "/create/:league_id",
-        get(get_create_season).post(post_create_season),
-    )
+pub fn routes<S>(state: AppState) -> Router<S> {
+    Router::new()
+        .route("/", get(list))
+        .route(
+            "/create/:league_id",
+            get(get_create_season).post(post_create_season),
+        )
+        .with_state(state)
 }
 
 /// List all seasons
-pub async fn list() -> Json<Value> {
+pub async fn list(State(state): State<AppState>) -> Json<Value> {
     // TODO: support pagination
     // TODO: Remove the use of unwrap/expect
     // We don't want to use unwrap since that will cause the server to panic
     // which is not something we want.
-    let store = MongoStore::new().await.unwrap();
+    let store = &state.store;
     let seasons = store.list_seasons().await;
     Json(serde_json::to_value(seasons).unwrap())
 }
 
-pub async fn get_create_season(Path(league_id): Path<Uuid>) -> Html<String> {
-    let store = MongoStore::new().await.unwrap();
+/// Get the create new season form
+pub async fn get_create_season(
+    State(state): State<AppState>,
+    Path(league_id): Path<Uuid>,
+) -> Html<String> {
+    let store = &state.store;
     // TODO: handle when no league is found
     let league = store.get_league(&league_id).await.unwrap();
 
     Html(SeasonCreateModalTemplate { league }.to_string())
 }
 
+/// Create a new [`Season`]
 pub async fn post_create_season(
+    State(state): State<AppState>,
     Path(league_id): Path<Uuid>,
     Form(input): Form<CreateSeasonInput>,
 ) -> Html<String> {
@@ -69,12 +85,11 @@ pub async fn post_create_season(
         input.season_name
     };
 
-    let mut store = MongoStore::new().await.unwrap();
+    let store = &state.store;
     let season = Season::new(&league_id, &start, &end, &name);
-    //TODO: read from input
     store.create_season(&season, input.make_active).await;
 
-    //TODO: return something more useful
+    //TODO: return something more useful, maybe a sucess dialog?
     Html(format!("{:?}", season))
 }
 

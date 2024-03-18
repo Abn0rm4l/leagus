@@ -1,24 +1,25 @@
 use askama::Template;
-use axum::extract::Path;
+use axum::extract::{Path, State};
 use axum::response::Html;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
 use leagus::models::{League, Season, SeasonTable};
-use leagus::persistence::mongo_store::MongoStore;
 use leagus::persistence::WriteableStore;
 
+use crate::state::AppState;
+
 /// Routes available for '/leagues' path.
-pub fn routes() -> Router {
+pub fn routes<S>(state: AppState) -> Router<S> {
     // TODO: Error handling
     Router::new()
         .route("/", get(list))
         .route("/:league_id", get(get_by_id))
+        .with_state(state)
 }
 
-async fn list(HxBoosted(boosted): HxBoosted) -> Html<String> {
-    // TODO: Don't create a new MongoStore every request
-    let store = MongoStore::new().await.unwrap();
+async fn list(State(state): State<AppState>, HxBoosted(boosted): HxBoosted) -> Html<String> {
+    let store = &state.store;
     let leagues = store.list_leagues().await;
 
     if boosted {
@@ -42,12 +43,12 @@ async fn list(HxBoosted(boosted): HxBoosted) -> Html<String> {
 }
 
 async fn get_by_id(
+    State(state): State<AppState>,
     HxRequest(hxrequest): HxRequest,
     HxBoosted(boosted): HxBoosted,
     Path(league_id): Path<Uuid>,
 ) -> Html<String> {
-    // TODO: Don't create a new MongoStore every request
-    let store = MongoStore::new().await.unwrap();
+    let store = &state.store;
     let league = store.get_league(&league_id).await;
     let seasons = store.list_seasons_for_league(&league_id).await;
 

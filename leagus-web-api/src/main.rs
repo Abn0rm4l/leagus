@@ -1,16 +1,20 @@
 use axum::Router;
 use handlers::{api, leagues, matches, root, seasons, sessions, venues};
+use state::AppState;
 use tower_http::services::ServeDir;
 
 mod handlers;
+mod state;
 
 #[tokio::main]
 async fn main() {
+    let state = AppState::new().await;
+
     let app = Router::new()
         .nest("/", root::routes())
         .nest("/api", api::routes())
-        .nest("/leagues", leagues::routes())
-        .nest("/seasons", seasons::routes())
+        .nest("/leagues", leagues::routes(state.clone()))
+        .nest("/seasons", seasons::routes(state.clone()))
         .nest("/sessions", sessions::routes())
         .nest("/matches", matches::routes())
         .nest("/venues", venues::routes())
