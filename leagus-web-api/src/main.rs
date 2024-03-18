@@ -3,6 +3,7 @@ use handlers::{api, leagues, matches, root, seasons, sessions, venues};
 use state::AppState;
 use tower_http::services::ServeDir;
 
+mod errors;
 mod handlers;
 mod state;
 

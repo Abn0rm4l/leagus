@@ -16,7 +16,7 @@ use leagus::{
 use serde::Deserialize;
 use serde_json::Value;
 
-use crate::state::AppState;
+use crate::{errors::LeagusError, state::AppState};
 
 /// Routes available for '/seasons' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
@@ -44,12 +44,12 @@ pub async fn list(State(state): State<AppState>) -> Json<Value> {
 pub async fn get_create_season(
     State(state): State<AppState>,
     Path(league_id): Path<Uuid>,
-) -> Html<String> {
+) -> Result<Html<String>, LeagusError> {
     let store = &state.store;
     // TODO: handle when no league is found
     let league = store.get_league(&league_id).await.unwrap();
 
-    Html(SeasonCreateModalTemplate { league }.to_string())
+    Ok(Html(SeasonCreateModalTemplate { league }.to_string()))
 }
 
 /// Create a new [`Season`]
@@ -57,7 +57,7 @@ pub async fn post_create_season(
     State(state): State<AppState>,
     Path(league_id): Path<Uuid>,
     Form(input): Form<CreateSeasonInput>,
-) -> Html<String> {
+) -> Result<Html<String>, LeagusError> {
     // TODO: Maybe store these as NaiveDate, I don't think any value is gained from having it as
     // DateTime?
 
@@ -90,7 +90,7 @@ pub async fn post_create_season(
     store.create_season(&season, input.make_active).await;
 
     //TODO: return something more useful, maybe a sucess dialog?
-    Html(format!("{:?}", season))
+    Ok(Html(format!("{:?}", season)))
 }
 
 #[derive(Template)]

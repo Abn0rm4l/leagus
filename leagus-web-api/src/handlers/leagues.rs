@@ -7,38 +7,41 @@ use bson::Uuid;
 use leagus::models::{League, Season, SeasonTable};
 use leagus::persistence::WriteableStore;
 
+use crate::errors::LeagusError;
 use crate::state::AppState;
 
 /// Routes available for '/leagues' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
-    // TODO: Error handling
     Router::new()
         .route("/", get(list))
         .route("/:league_id", get(get_by_id))
         .with_state(state)
 }
 
-async fn list(State(state): State<AppState>, HxBoosted(boosted): HxBoosted) -> Html<String> {
+async fn list(
+    State(state): State<AppState>,
+    HxBoosted(boosted): HxBoosted,
+) -> Result<Html<String>, LeagusError> {
     let store = &state.store;
     let leagues = store.list_leagues().await;
 
     if boosted {
-        Html(
+        Ok(Html(
             LeaguesPartialTemplate {
                 title: "Leagues",
                 leagues,
             }
             .to_string(),
-        )
+        ))
     } else {
-        Html(
+        Ok(Html(
             LeaguesFullTemplate {
                 title: "Leagues",
                 headings: vec!["Leagues", "Players", "Tables"],
                 leagues,
             }
             .to_string(),
-        )
+        ))
     }
 }
 
@@ -47,7 +50,7 @@ async fn get_by_id(
     HxRequest(hxrequest): HxRequest,
     HxBoosted(boosted): HxBoosted,
     Path(league_id): Path<Uuid>,
-) -> Html<String> {
+) -> Result<Html<String>, LeagusError> {
     let store = &state.store;
     let league = store.get_league(&league_id).await;
     let seasons = store.list_seasons_for_league(&league_id).await;
@@ -55,16 +58,16 @@ async fn get_by_id(
     match league {
         Some(league) => {
             if boosted || hxrequest {
-                Html(
+                Ok(Html(
                     LeagueContentTemplate {
                         league,
                         seasons,
                         season_table: SeasonTable::new(),
                     }
                     .to_string(),
-                )
+                ))
             } else {
-                Html(
+                Ok(Html(
                     LeagueTemplate {
                         headings: vec!["Leagues", "Players", "Tables"],
                         league,
@@ -72,10 +75,10 @@ async fn get_by_id(
                         season_table: SeasonTable::new(),
                     }
                     .to_string(),
-                )
+                ))
             }
         }
-        None => Html("League not found".to_string()),
+        None => Err(LeagusError::Internal), // TODO: Return better error
     }
 }
 
