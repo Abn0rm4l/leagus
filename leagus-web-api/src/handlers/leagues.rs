@@ -4,7 +4,7 @@ use axum::response::Html;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
-use leagus::models::{League, Season, SeasonTable};
+use leagus::models::{League, PointsTable, PointsTableEntry, Season};
 use leagus::persistence::WriteableStore;
 
 use crate::errors::LeagusError;
@@ -55,6 +55,34 @@ async fn get_by_id(
     let league = store.get_league(&league_id).await;
     let seasons = store.list_seasons_for_league(&league_id).await;
 
+    // TODO: Provide real data
+    let mut entries = vec![
+        PointsTableEntry {
+            participant_name: "Roger".to_string(),
+            participant_id: Uuid::new(),
+            points: 189,
+            wins: 31,
+            losses: 15,
+        },
+        PointsTableEntry {
+            participant_name: "Rafael".to_string(),
+            participant_id: Uuid::new(),
+            points: 193,
+            wins: 32,
+            losses: 18,
+        },
+        PointsTableEntry {
+            participant_name: "Andy".to_string(),
+            participant_id: Uuid::new(),
+            points: 163,
+            wins: 28,
+            losses: 19,
+        },
+    ];
+
+    entries.sort_by(|a, b| a.points.cmp(&b.points).reverse());
+    let points_table = PointsTable { entries };
+
     match league {
         Some(league) => {
             if boosted || hxrequest {
@@ -62,7 +90,7 @@ async fn get_by_id(
                     LeagueContentTemplate {
                         league,
                         seasons,
-                        season_table: SeasonTable::new(),
+                        points_table,
                     }
                     .to_string(),
                 ))
@@ -72,7 +100,7 @@ async fn get_by_id(
                         headings: vec!["Leagues", "Players", "Tables"],
                         league,
                         seasons,
-                        season_table: SeasonTable::new(),
+                        points_table,
                     }
                     .to_string(),
                 ))
@@ -104,7 +132,7 @@ struct LeaguesPartialTemplate<'a> {
 struct LeagueContentTemplate {
     league: League,
     seasons: Vec<Season>,
-    season_table: SeasonTable,
+    points_table: PointsTable,
 }
 
 #[derive(Template)]
@@ -113,5 +141,5 @@ struct LeagueTemplate<'a> {
     headings: Vec<&'a str>,
     league: League,
     seasons: Vec<Season>,
-    season_table: SeasonTable,
+    points_table: PointsTable,
 }

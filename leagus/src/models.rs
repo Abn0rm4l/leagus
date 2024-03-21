@@ -54,7 +54,7 @@ pub struct Season {
     #[serde(default)]
     pub name: String,
 
-    pub table: SeasonTable,
+    pub table: PointsTable,
     // TODO: add scoring system
     // TODO: add participants (pool of players available for the season)?
 }
@@ -74,7 +74,7 @@ impl Season {
             start: *start,
             end: *end,
             name: name.to_string(),
-            table: SeasonTable {
+            table: PointsTable {
                 entries: Vec::new(),
             },
         }
@@ -83,14 +83,14 @@ impl Season {
 
 /// A score table for the season
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct SeasonTable {
+pub struct PointsTable {
     #[serde(default)]
-    pub entries: Vec<SeasonTableEntry>,
+    pub entries: Vec<PointsTableEntry>,
 }
 
-impl SeasonTable {
-    pub fn new() -> SeasonTable {
-        SeasonTable {
+impl PointsTable {
+    pub fn new() -> PointsTable {
+        PointsTable {
             entries: Vec::new(),
         }
     }
@@ -98,8 +98,9 @@ impl SeasonTable {
 
 /// A single entry in the scoring table
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub struct SeasonTableEntry {
-    pub participant: ParticipantId,
+pub struct PointsTableEntry {
+    pub participant_name: String,
+    pub participant_id: ParticipantId,
     pub points: u32,
     pub wins: u32,
     pub losses: u32,

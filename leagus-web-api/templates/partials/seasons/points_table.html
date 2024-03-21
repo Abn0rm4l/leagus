@@ -38,116 +38,32 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for entry in points_table.entries %}
             <tr>
               <td
                 class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
               >
-                1
+                {{ loop.index }}
               </td>
               <td
                 class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
               >
-                John Brown
+                {{ entry.participant_name }}
               </td>
               <td
                 class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
               >
-                45
+                {{ entry.points }}
               </td>
               <td
                 class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
               >
-                100
+                {{ entry.wins }}
               </td>
               <td
                 class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
               >
-                5
-              </td>
-            </tr>
-
-            <tr>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
-              >
-                2
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
-              >
-                Jim Green
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
-              >
-                27
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
-              >
-                24
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
-              >
-                18
-              </td>
-            </tr>
-
-            <tr>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
-              >
-                3
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
-              >
-                Joe Black
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
-              >
-                31
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
-              >
-                98
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
-              >
-                134
-              </td>
-            </tr>
-
-            {% for entry in season_table.entries %}
-            <tr>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
-              >
-                loop.index
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-gray-200"
-              >
-                entry.name
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
-              >
-                entry.points
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-xs text-gray-800 dark:text-gray-200"
-              >
-                entry.wins
-              </td>
-              <td
-                class="px-6 py-2 whitespace-nowrap text-end text-xs font-medium"
-              >
-                entry.losses
+                {{ entry.losses }}
               </td>
             </tr>
             {% endfor %}
