@@ -215,14 +215,14 @@ mod tests {
             id: uuid,
             name: String::from("Epic"),
             description: "Tim's your uncle".to_string(),
-            seasons: Vec::new(),
+            active_season: None,
         };
 
         let league2 = League {
             id: uuid,
             name: String::from("Epic"),
             description: "Tim's your uncle".to_string(),
-            seasons: Vec::new(),
+            active_season: None,
         };
 
         assert_eq!(league1, league2);
