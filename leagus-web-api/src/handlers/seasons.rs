@@ -10,7 +10,7 @@ use axum::{
 use bson::Uuid;
 use chrono::{DurationRound, NaiveDate, NaiveDateTime, TimeDelta, Utc};
 use leagus::{
-    models::{League, Season},
+    models::{League, LeagueId, Season},
     persistence::{mongo_store::MongoStore, WriteableStore},
 };
 use serde::Deserialize;
@@ -46,6 +46,7 @@ pub async fn get_create_season(
     Path(league_id): Path<Uuid>,
 ) -> Result<Html<String>, LeagusError> {
     let store = &state.store;
+    let league_id = LeagueId::from(league_id);
     // TODO: handle when no league is found
     let league = store.get_league(&league_id).await.unwrap();
 
@@ -86,6 +87,7 @@ pub async fn post_create_season(
     };
 
     let store = &state.store;
+    let league_id = LeagueId::from(league_id);
     let season = Season::new(&league_id, &start, &end, &name);
     store.create_season(&season, input.make_active).await;
 
