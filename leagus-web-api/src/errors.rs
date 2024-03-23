@@ -3,11 +3,6 @@ use axum::{
     response::{IntoResponse, Response},
 };
 
-pub enum Result<T> {
-    Ok(T),
-    Err(LeagusError),
-}
-
 /// All errors exposed via external interfaces
 pub enum LeagusError {
     /// Something unexpected went wrong
