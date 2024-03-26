@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use askama::Template;
 use axum::{
     extract::{Path, State},
@@ -11,7 +9,7 @@ use bson::Uuid;
 use chrono::{DurationRound, NaiveDate, NaiveDateTime, TimeDelta, Utc};
 use leagus::{
     models::{League, LeagueId, Season},
-    persistence::{mongo_store::MongoStore, WriteableStore},
+    persistence::WriteableStore,
 };
 use serde::Deserialize;
 use serde_json::Value;
@@ -59,9 +57,11 @@ pub async fn post_create_season(
     Path(league_id): Path<Uuid>,
     Form(input): Form<CreateSeasonInput>,
 ) -> Result<Html<String>, LeagusError> {
+    println!("Create Season Input: {:?}", input);
+
     // TODO: Maybe store these as NaiveDate, I don't think any value is gained from having it as
     // DateTime?
-
+    //
     // Try parse the Date, if that doesn't work use Utc::now.
     let start = NaiveDate::parse_from_str(&input.start_date, "%Y-%m-%d");
     let start = match start {
@@ -86,10 +86,12 @@ pub async fn post_create_season(
         input.season_name
     };
 
+    let make_active = input.make_active.eq_ignore_ascii_case("on");
+
     let store = &state.store;
     let league_id = LeagueId::from(league_id);
     let season = Season::new(&league_id, &start, &end, &name);
-    store.create_season(&season, input.make_active).await;
+    store.create_season(&season, make_active).await;
 
     //TODO: return something more useful, maybe a sucess dialog?
     Ok(Html(format!("{:?}", season)))
@@ -101,7 +103,7 @@ struct SeasonCreateModalTemplate {
     league: League,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct CreateSeasonInput {
     #[serde(default)]
     season_name: String,
@@ -110,5 +112,5 @@ pub struct CreateSeasonInput {
     #[serde(default)]
     end_date: String,
     #[serde(default)]
-    make_active: bool,
+    make_active: String,
 }

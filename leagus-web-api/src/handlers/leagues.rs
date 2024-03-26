@@ -4,7 +4,9 @@ use axum::response::Html;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
-use leagus::models::{League, LeagueId, ParticipantId, PointsTable, PointsTableEntry, Season};
+use leagus::models::{
+    League, LeagueId, ParticipantId, PointsTable, PointsTableEntry, Season, Session, SessionId,
+};
 use leagus::persistence::WriteableStore;
 
 use crate::errors::LeagusError;
@@ -51,9 +53,13 @@ async fn get_by_id(
     HxBoosted(boosted): HxBoosted,
     Path(league_id): Path<Uuid>,
 ) -> Result<Html<String>, LeagusError> {
+    println!("Getting page for league: {league_id}");
+
     let store = &state.store;
     let league_id = LeagueId::from(league_id);
+    println!("Converted league_id to {league_id}");
     let league = store.get_league(&league_id).await;
+    println!("Found league: {:?}", league);
     let seasons = store.list_seasons_for_league(&league_id).await;
 
     // TODO: Provide real data
@@ -85,13 +91,28 @@ async fn get_by_id(
     let points_table = PointsTable { entries };
 
     match league {
+        None => Err(LeagusError::Internal), // TODO: Return better error
         Some(league) => {
+            let active_season = seasons
+                .iter()
+                .find(|x| Some(x.id) == league.active_season)
+                .cloned();
+
+            let active_session_id = active_season.clone().and_then(|x| x.active_session);
+
+            let active_session = match active_session_id {
+                Some(id) => store.get_session(&id).await,
+                _ => None,
+            };
+
             if boosted || hxrequest {
                 Ok(Html(
                     LeagueContentTemplate {
                         league,
                         seasons,
                         points_table,
+                        active_season,
+                        active_session,
                     }
                     .to_string(),
                 ))
@@ -102,12 +123,13 @@ async fn get_by_id(
                         league,
                         seasons,
                         points_table,
+                        active_season,
+                        active_session,
                     }
                     .to_string(),
                 ))
             }
         }
-        None => Err(LeagusError::Internal), // TODO: Return better error
     }
 }
 
@@ -133,6 +155,8 @@ struct LeaguesPartialTemplate<'a> {
 struct LeagueContentTemplate {
     league: League,
     seasons: Vec<Season>,
+    active_season: Option<Season>,
+    active_session: Option<Session>,
     points_table: PointsTable,
 }
 
@@ -142,5 +166,7 @@ struct LeagueTemplate<'a> {
     headings: Vec<&'a str>,
     league: League,
     seasons: Vec<Season>,
+    active_season: Option<Season>,
+    active_session: Option<Session>,
     points_table: PointsTable,
 }

@@ -3,7 +3,7 @@ use mongodb::error::Result;
 use mongodb::options::ClientOptions;
 use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
 
-use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, Venue};
+use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, SessionId, Venue};
 use crate::persistence::WriteableStore;
 
 /// Name of the MongoDB Database
@@ -124,6 +124,20 @@ impl WriteableStore for MongoStore {
     async fn create_session(&self, session: &Session) {
         let sessions = sessions_collection(self);
         let _ = sessions.insert_one(session, None).await;
+
+        // New sessions are always made active
+        let seasons = seasons_collection(self);
+        let _update_result = seasons
+            .update_one(
+                doc! {
+                    "_id": &session.season_id
+                },
+                doc! {
+                    "$set": { "active_session_id": &session.id }
+                },
+                None,
+            )
+            .await;
     }
 
     async fn create_round(&self, round: &Round) {
@@ -168,6 +182,17 @@ impl WriteableStore for MongoStore {
         let result = seasons.find_one(
             doc! {
                 "_id": season_id
+            },
+            None,
+        );
+        result.await.ok().unwrap_or_default()
+    }
+
+    async fn get_session(&self, session_id: &SessionId) -> Option<Session> {
+        let sessions = sessions_collection(self);
+        let result = sessions.find_one(
+            doc! {
+                "_id": session_id
             },
             None,
         );

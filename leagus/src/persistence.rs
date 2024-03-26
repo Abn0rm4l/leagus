@@ -1,7 +1,7 @@
 pub mod mongo_store;
 pub mod sync;
 
-use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, Venue};
+use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, SessionId, Venue};
 
 /// Defines interactions with a write store.
 ///
@@ -36,6 +36,9 @@ pub trait WriteableStore {
 
     /// Get [`Season`] by id
     async fn get_season(&self, season_id: &SeasonId) -> Option<Season>;
+
+    /// Get [`Session`] by id
+    async fn get_session(&self, season_id: &SessionId) -> Option<Session>;
 
     /// List all the leagues
     async fn list_leagues(&self) -> Vec<League>;

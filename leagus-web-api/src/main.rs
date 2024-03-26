@@ -16,7 +16,7 @@ async fn main() {
         .nest("/api", api::routes())
         .nest("/leagues", leagues::routes(state.clone()))
         .nest("/seasons", seasons::routes(state.clone()))
-        .nest("/sessions", sessions::routes())
+        .nest("/sessions", sessions::routes(state.clone()))
         .nest("/matches", matches::routes())
         .nest("/venues", venues::routes())
         .nest_service("/assets", ServeDir::new("assets"));

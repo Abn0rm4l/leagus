@@ -75,6 +75,8 @@
   </div>
   <div class="divider divider-start">Session</div>
   <div class="container ml-2">
-    {% include "partials/sessions/single_session.html" %}
+    {% if active_session.is_none() %} {% include
+    "partials/sessions/no_session.html" %} {% else %} {% include
+    "partials/sessions/single_session.html" %} {% endif %}
   </div>
 </div>

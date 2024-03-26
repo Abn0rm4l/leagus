@@ -1,8 +1,9 @@
 use bson::Uuid;
 use chrono::{DateTime, Utc};
 use clap::{arg, ArgMatches, Command};
-use leagus::models::Session;
+use leagus::models::{SeasonId, Session};
 use leagus::persistence::sync::{mongo_store::MongoStore, WriteableStore};
+use serde::Serialize;
 
 pub const CMD_NAME: &str = "sessions";
 
@@ -43,8 +44,8 @@ pub fn handle_subcommands(matches: &ArgMatches) {
 
 /// Add a new season to a league
 fn create(matches: &ArgMatches) {
-    let season_name = matches.get_one::<String>("season").expect("required");
-    let season_name = Uuid::parse_str(season_name).expect("Invalid season id");
+    let season_id = matches.get_one::<String>("season").expect("required");
+    let season_id = Uuid::parse_str(season_id).expect("Invalid season id");
 
     // TODO: handle bad dates with more grace
     // TODO: be more flexible on date formats
@@ -55,15 +56,19 @@ fn create(matches: &ArgMatches) {
     };
 
     let mut store = MongoStore::new();
-    let season = store.get_season(&season_name);
+    let season = store.get_season(&SeasonId::from(season_id));
 
     match season {
         Some(season) => {
-            println!("Adding new session to {:?}", season);
             let session = Session::new(&season.id, &date);
+            println!(
+                "Adding new session {} to {}",
+                serde_json::to_string_pretty(&session).unwrap(),
+                serde_json::to_string_pretty(&season).unwrap()
+            );
             store.create_session(&session);
         }
-        None => println!("Cannot find league with name \"{}\".", season_name),
+        None => println!("Cannot find league with name \"{}\".", season_id),
     }
 }
 
@@ -72,7 +77,7 @@ fn list(_matches: &ArgMatches) {
     let store = MongoStore::new();
     let seasons = store.list_seasons();
     for season in seasons {
-        println!("Season: {} ({})", season.name, season.id.to_string());
+        println!("Season: {} ({})", season.name, season.id);
         let sessions = store.list_sessions_for_season(&season.id);
         for season in sessions {
             println!("\t- {:?}", season);
