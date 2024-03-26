@@ -113,7 +113,7 @@ impl WriteableStore for MongoStore {
                         "_id": &season.league_id
                     },
                     doc! {
-                        "$set": { "active_season": Some(&season.id) }
+                        "$set": { "active_season_id": &season.id }
                     },
                     None,
                 )

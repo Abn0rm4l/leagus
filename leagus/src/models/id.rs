@@ -9,9 +9,8 @@ use serde::{Deserialize, Serialize};
 /// E.g. an ID<League> is a different type from ID<Season>.
 #[derive(Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct ID<T> {
-    // Flatten will inline this field into its parent.
-    // See https://serde.rs/attr-flatten.html
-    #[serde(rename = "_id", flatten)]
+    // The mongodb id field is named "_id"
+    #[serde(rename = "_id")]
     pub id: Uuid,
 
     #[serde(skip)]
