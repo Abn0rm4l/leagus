@@ -1022,7 +1022,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "leagus-web-api"
+name = "leagus-web"
 version = "0.1.0"
 dependencies = [
  "askama",
