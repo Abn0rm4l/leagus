@@ -26,8 +26,28 @@ pub struct Match {
     pub round_id: RoundId,
     #[serde(flatten, with = "prefix_venue")]
     pub venue_id: VenueId,
-    pub participants: Vec<ParticipantId>,
-    // TODO: Result/Score
+    pub details: MatchDetails,
+}
+
+/// Match Details represents the participants and scores in a format relevant to a particular kind
+/// of match. For example a tennis singles match or tennis doubles match.
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+pub enum MatchDetails {
+    /// Placeholder Value
+    None,
+
+    TennisSingles {
+        players: (ParticipantId, ParticipantId),
+        scores: Vec<(u8, u8)>,
+    },
+
+    TennisDoubles {
+        players: (
+            (ParticipantId, ParticipantId),
+            (ParticipantId, ParticipantId),
+        ),
+        scores: Vec<(u8, u8)>,
+    },
 }
 
 impl Match {
@@ -36,7 +56,7 @@ impl Match {
             id: MatchId::new(),
             round_id,
             venue_id,
-            participants: Vec::new(),
+            details: MatchDetails::None,
         }
     }
 }
@@ -56,20 +76,51 @@ mod tests {
         let round_id = RoundId::from(round_uuid);
         let venue_id = VenueId::from(venue_uuid);
 
-        let participant = Match {
+        let a_match = Match {
             id,
             round_id,
             venue_id,
-            participants: Vec::new(),
+            details: MatchDetails::None,
         };
 
-        let bson = bson::to_document(&participant).unwrap();
+        let bson = bson::to_document(&a_match).unwrap();
 
         let expected_bson = doc! {
-            "_id": participant.id,
-            "round_id": participant.round_id,
-            "venue_id": participant.venue_id,
-            "participants": participant.participants,
+            "_id": a_match.id,
+            "round_id": a_match.round_id,
+            "venue_id": a_match.venue_id,
+            "details": bson::to_bson(&a_match.details).unwrap(),
+        };
+
+        assert_eq!(bson, expected_bson);
+    }
+
+    #[test]
+    fn serialize_as_bson_with_details() {
+        let uuid = Uuid::parse_str("00000000-2248-4345-80ec-b88499f9ff1e").unwrap();
+        let round_uuid = Uuid::parse_str("11111111-2248-4345-80ec-b88499f9ff1e").unwrap();
+        let venue_uuid = Uuid::parse_str("22222222-2248-4345-80ec-b88499f9ff1e").unwrap();
+        let id = MatchId::from(uuid);
+        let round_id = RoundId::from(round_uuid);
+        let venue_id = VenueId::from(venue_uuid);
+
+        let players = (ParticipantId::new(), ParticipantId::new());
+        let scores = vec![(5, 7), (6, 4), (7, 6)];
+
+        let a_match = Match {
+            id,
+            round_id,
+            venue_id,
+            details: MatchDetails::TennisSingles { players, scores },
+        };
+
+        let bson = bson::to_document(&a_match).unwrap();
+
+        let expected_bson = doc! {
+            "_id": a_match.id,
+            "round_id": a_match.round_id,
+            "venue_id": a_match.venue_id,
+            "details": bson::to_bson(&a_match.details).unwrap(),
         };
 
         assert_eq!(bson, expected_bson);
