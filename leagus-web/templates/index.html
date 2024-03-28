@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% block header %}
+{% let selected = "Dashboard" %}
+{% include "partials/navbar.html" %}
+{% endblock header %}
 {% block content %}
 {% include "partials/index_content.html" %}
 {% endblock %}

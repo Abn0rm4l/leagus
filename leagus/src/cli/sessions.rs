@@ -3,7 +3,6 @@ use chrono::{DateTime, Utc};
 use clap::{arg, ArgMatches, Command};
 use leagus::models::{SeasonId, Session};
 use leagus::persistence::sync::{mongo_store::MongoStore, WriteableStore};
-use serde::Serialize;
 
 pub const CMD_NAME: &str = "sessions";
 

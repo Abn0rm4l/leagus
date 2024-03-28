@@ -5,7 +5,7 @@ use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
 use leagus::models::{
-    League, LeagueId, ParticipantId, PointsTable, PointsTableEntry, Season, Session, SessionId,
+    League, LeagueId, ParticipantId, PointsTable, PointsTableEntry, Season, Session,
 };
 use leagus::persistence::WriteableStore;
 
@@ -28,22 +28,9 @@ async fn list(
     let leagues = store.list_leagues().await;
 
     if boosted {
-        Ok(Html(
-            LeaguesPartialTemplate {
-                title: "Leagues",
-                leagues,
-            }
-            .to_string(),
-        ))
+        Ok(Html(LeaguesPartialTemplate { leagues }.to_string()))
     } else {
-        Ok(Html(
-            LeaguesFullTemplate {
-                title: "Leagues",
-                headings: vec!["Leagues", "Players", "Tables"],
-                leagues,
-            }
-            .to_string(),
-        ))
+        Ok(Html(LeaguesFullTemplate { leagues }.to_string()))
     }
 }
 
@@ -119,7 +106,6 @@ async fn get_by_id(
             } else {
                 Ok(Html(
                     LeagueTemplate {
-                        headings: vec!["Leagues", "Players", "Tables"],
                         league,
                         seasons,
                         points_table,
@@ -137,16 +123,13 @@ async fn get_by_id(
 
 #[derive(Template)]
 #[template(path = "leagues.html")]
-struct LeaguesFullTemplate<'a> {
-    title: &'a str,
-    headings: Vec<&'a str>,
+struct LeaguesFullTemplate {
     leagues: Vec<League>,
 }
 
 #[derive(Template)]
 #[template(path = "partials/leagues_content.html")]
-struct LeaguesPartialTemplate<'a> {
-    title: &'a str,
+struct LeaguesPartialTemplate {
     leagues: Vec<League>,
 }
 
@@ -162,8 +145,7 @@ struct LeagueContentTemplate {
 
 #[derive(Template)]
 #[template(path = "league.html")]
-struct LeagueTemplate<'a> {
-    headings: Vec<&'a str>,
+struct LeagueTemplate {
     league: League,
     seasons: Vec<Season>,
     active_season: Option<Season>,

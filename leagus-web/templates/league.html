@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% block header %}
+{% let selected = "Leagues" %}
+{% include "partials/navbar.html" %}
+{% endblock header %}
 {% block content %}
 {% include "partials/leagues/single_content.html" %}
 {% endblock %}

@@ -11,38 +11,20 @@ pub fn routes() -> Router {
 
 async fn index(HxBoosted(boosted): HxBoosted) -> Html<String> {
     if boosted {
-        Html(
-            IndexPartialTemplate {
-                title: "Dashboard",
-                name: "Lionel",
-                headings: vec!["Leagues", "Players", "Tables"],
-            }
-            .to_string(),
-        )
+        Html(IndexPartialTemplate { name: "Lionel" }.to_string())
     } else {
-        Html(
-            IndexFullTemplate {
-                title: "Dashboard",
-                name: "Lionel",
-                headings: vec!["Leagues", "Players", "Tables"],
-            }
-            .to_string(),
-        )
+        Html(IndexFullTemplate { name: "Lionel" }.to_string())
     }
 }
 
 #[derive(Template)]
 #[template(path = "index.html")]
 struct IndexFullTemplate<'a> {
-    title: &'a str,
     name: &'a str,
-    headings: Vec<&'a str>,
 }
 
 #[derive(Template)]
 #[template(path = "partials/index_content.html")]
 struct IndexPartialTemplate<'a> {
-    title: &'a str,
     name: &'a str,
-    headings: Vec<&'a str>,
 }
