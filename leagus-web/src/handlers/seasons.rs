@@ -98,7 +98,7 @@ pub async fn post_create_season(
 }
 
 #[derive(Template)]
-#[template(path = "partials/season_create_modal.html")]
+#[template(path = "partials/seasons/create_season.html")]
 struct SeasonCreateModalTemplate {
     league: League,
 }

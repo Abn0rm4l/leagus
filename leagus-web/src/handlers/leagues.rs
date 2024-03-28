@@ -20,18 +20,11 @@ pub fn routes<S>(state: AppState) -> Router<S> {
         .with_state(state)
 }
 
-async fn list(
-    State(state): State<AppState>,
-    HxBoosted(boosted): HxBoosted,
-) -> Result<Html<String>, LeagusError> {
+async fn list(State(state): State<AppState>) -> Result<Html<String>, LeagusError> {
     let store = &state.store;
     let leagues = store.list_leagues().await;
 
-    if boosted {
-        Ok(Html(LeaguesPartialTemplate { leagues }.to_string()))
-    } else {
-        Ok(Html(LeaguesFullTemplate { leagues }.to_string()))
-    }
+    Ok(Html(LeaguesFullTemplate { leagues }.to_string()))
 }
 
 async fn get_by_id(
@@ -124,12 +117,6 @@ async fn get_by_id(
 #[derive(Template)]
 #[template(path = "leagues.html")]
 struct LeaguesFullTemplate {
-    leagues: Vec<League>,
-}
-
-#[derive(Template)]
-#[template(path = "partials/leagues_content.html")]
-struct LeaguesPartialTemplate {
     leagues: Vec<League>,
 }
 

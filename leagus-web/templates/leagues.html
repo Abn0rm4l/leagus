@@ -4,5 +4,25 @@
 {% include "partials/navbar.html" %}
 {% endblock header %}
 {% block content %}
-{% include "partials/leagues_content.html" %}
+<div class="bg-slate-200 mx-auto max-w-7xl py-2 sm:px-6 lg:px-8">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for league in leagues %}
+      <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="main">
+        <th>{{ loop.index }}</th>
+        <td>{{ league.name }}</td>
+        <td>{{ league.description }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
