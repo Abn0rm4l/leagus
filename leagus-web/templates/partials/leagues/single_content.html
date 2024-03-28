@@ -1,4 +1,3 @@
-<div class="mx-auto max-w-7xl py-2 sm:px-6 lg:px-8">
   <div class="text-sm breadcrumbs">
     <ul>
       <li>
@@ -75,8 +74,9 @@
   </div>
   <div class="divider divider-start">Session</div>
   <div class="container ml-2">
-    {% if active_session.is_none() %} {% include
-    "partials/sessions/no_session.html" %} {% else %} {% include
-    "partials/sessions/single_session.html" %} {% endif %}
+    {% if active_session.is_none() %}
+    {% include "partials/sessions/no_session.html" %}
+    {% else %}
+    {% include "partials/sessions/single_session.html" %}
+    {% endif %}
   </div>
-</div>

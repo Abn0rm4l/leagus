@@ -20,10 +20,12 @@
   <body>
     {% block header %} {% endblock header %}
 
-    <main id="content">
+    <main>
+      <div id="content" class="mx-auto max-w-7xl py-2 sm:px-6 lg:px-8">
       {% block content %}
-      <p>Placeholder Content</p>
+        <p>Placeholder Content</p>
       {% endblock content %}
+      </div>
     </main>
   </body>
 </html>

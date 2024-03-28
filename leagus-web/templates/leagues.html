@@ -4,7 +4,6 @@
 {% include "partials/navbar.html" %}
 {% endblock header %}
 {% block content %}
-<div class="bg-slate-200 mx-auto max-w-7xl py-2 sm:px-6 lg:px-8">
   <table class="table">
     <!-- head -->
     <thead>
@@ -16,7 +15,7 @@
     </thead>
     <tbody>
       {% for league in leagues %}
-      <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="main">
+      <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="#content">
         <th>{{ loop.index }}</th>
         <td>{{ league.name }}</td>
         <td>{{ league.description }}</td>
@@ -24,5 +23,4 @@
       {% endfor %}
     </tbody>
   </table>
-</div>
 {% endblock %}
