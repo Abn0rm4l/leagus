@@ -1,82 +1,82 @@
-  <div class="text-sm breadcrumbs">
-    <ul>
-      <li>
-        <a href="/leagues">Leagues</a>
-      </li>
-      <li>{{ league.name }}</li>
-    </ul>
-  </div>
+<div class="text-sm breadcrumbs">
+  <ul>
+    <li>
+      <a href="/leagues">Leagues</a>
+    </li>
+    <li>{{ league.name }}</li>
+  </ul>
+</div>
 
-  <div class="divider divider-start">Details</div>
-  <div class="overflow-x-auto container shadow ml-2 rounded bg-slate-200">
-    <table class="table-sm">
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <td>{{ league.name }}</td>
-        </tr>
-        <tr>
-          <th>Description</th>
-          <td>{{ league.description }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+<div class="divider divider-start">Details</div>
+<div class="overflow-x-auto container shadow ml-2 rounded bg-slate-200">
+  <table class="table-sm">
+    <tbody>
+      <tr>
+        <th>Name</th>
+        <td>{{ league.name }}</td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>{{ league.description }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-  <div class="divider divider-start">Seasons</div>
-  <div class="overflow-x-auto container shadow ml-2 rounded">
-    <table class="table-xs">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for season in seasons %}
-        <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="main">
-          <th>{{ loop.index }}</th>
-          <td>{{ season.name }}</td>
-          <td>{{ season.start }}</td>
-          <td>{{ season.end }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <!-- hx-target="#new-season-modal" -->
-    <!-- hx-swap="outerHtml" -->
-    <button
-      id="new-season-btn"
-      hx-get="/seasons/create/{{ league.id }}"
-      hx-trigger="click once"
-      hx-target="#new-season-modal"
-      hx-swap="outerHTML"
-      _="on click send showModal to #new-season-modal"
-      class="w-full py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+<div class="divider divider-start">Seasons</div>
+<div class="overflow-x-auto container shadow ml-2 rounded">
+  <table class="table-xs">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for season in seasons %}
+      <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="main">
+        <th>{{ loop.index }}</th>
+        <td>{{ season.name }}</td>
+        <td>{{ season.start }}</td>
+        <td>{{ season.end }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <!-- hx-target="#new-season-modal" -->
+  <!-- hx-swap="outerHtml" -->
+  <button
+    id="new-season-btn"
+    hx-get="/seasons/create/{{ league.id }}"
+    hx-trigger="click once"
+    hx-target="#new-season-modal"
+    hx-swap="outerHTML"
+    _="on click send showModal to #new-season-modal"
+    class="w-full py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+  >
+    New Season
+  </button>
+  <dialog id="new-season-modal">
+    <div
+      class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+      role="status"
+      aria-label="loading"
     >
-      New Season
-    </button>
-    <dialog id="new-season-modal">
-      <div
-        class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
-        role="status"
-        aria-label="loading"
-      >
-        <span class="sr-only">Loading...</span>
-      </div>
-    </dialog>
-  </div>
-  <div class="divider divider-start">Table</div>
-  <div class="container ml-2">
-    {% include "partials/seasons/points_table.html" %}
-  </div>
-  <div class="divider divider-start">Session</div>
-  <div class="container ml-2">
-    {% if active_session.is_none() %}
-    {% include "partials/sessions/no_session.html" %}
-    {% else %}
-    {% include "partials/sessions/single_session.html" %}
-    {% endif %}
-  </div>
+      <span class="sr-only">Loading...</span>
+    </div>
+  </dialog>
+</div>
+<div class="divider divider-start">Table</div>
+<div class="container ml-2">
+  {% include "partials/seasons/points_table.html" %}
+</div>
+<div class="divider divider-start">Session</div>
+<div class="container ml-2">
+  {% if active_session.is_none() %}
+  {% include "partials/sessions/no_session.html" %}
+  {% else %}
+  {% include "partials/sessions/single_session.html" %}
+  {% endif %}
+</div>
