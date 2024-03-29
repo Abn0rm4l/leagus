@@ -1,4 +1,3 @@
-use askama::Template;
 use axum::{
     extract::{Path, State},
     response::Html,
@@ -8,13 +7,13 @@ use axum::{
 use bson::Uuid;
 use chrono::{DurationRound, NaiveDate, NaiveDateTime, TimeDelta, Utc};
 use leagus::{
-    models::{League, LeagueId, Season},
+    models::{LeagueId, Season},
     persistence::WriteableStore,
 };
 use serde::Deserialize;
 use serde_json::Value;
 
-use crate::{errors::LeagusError, state::AppState};
+use crate::{errors::LeagusError, state::AppState, templates::SeasonCreateModalTemplate};
 
 /// Routes available for '/seasons' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
@@ -95,12 +94,6 @@ pub async fn post_create_season(
 
     //TODO: return something more useful, maybe a sucess dialog?
     Ok(Html(format!("{:?}", season)))
-}
-
-#[derive(Template)]
-#[template(path = "partials/seasons/create_season.html")]
-struct SeasonCreateModalTemplate {
-    league: League,
 }
 
 #[derive(Deserialize, Debug)]

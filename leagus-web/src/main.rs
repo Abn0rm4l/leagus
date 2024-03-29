@@ -6,6 +6,7 @@ use tower_http::services::ServeDir;
 mod errors;
 mod handlers;
 mod state;
+mod templates;
 
 #[tokio::main]
 async fn main() {

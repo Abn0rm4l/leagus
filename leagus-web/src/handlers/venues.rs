@@ -1,9 +1,12 @@
-use askama::Template;
 use axum::{extract::State, response::Html, routing::get, Form, Router};
 use leagus::{models::Venue, persistence::WriteableStore};
 use serde::Deserialize;
 
-use crate::{errors::LeagusError, state::AppState};
+use crate::{
+    errors::LeagusError,
+    state::AppState,
+    templates::{CreateVenueTemplate, VenuesTemplate},
+};
 
 /// Routes available for '/venues' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
@@ -39,18 +42,6 @@ pub async fn post_create_venue(
 
     Ok(Html("venue Created!".to_string()))
 }
-
-// -- Templates
-
-#[derive(Template)]
-#[template(path = "venues.html")]
-struct VenuesTemplate {
-    venues: Vec<Venue>,
-}
-
-#[derive(Template)]
-#[template(path = "partials/venues/create_venue.html")]
-struct CreateVenueTemplate {}
 
 #[derive(Deserialize, Debug)]
 pub struct CreateVenueInput {

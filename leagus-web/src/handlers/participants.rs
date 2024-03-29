@@ -1,9 +1,12 @@
-use askama::Template;
 use axum::{extract::State, response::Html, routing::get, Form, Router};
 use leagus::{models::Participant, persistence::WriteableStore};
 use serde::Deserialize;
 
-use crate::{errors::LeagusError, state::AppState};
+use crate::{
+    errors::LeagusError,
+    state::AppState,
+    templates::{CreateParticipantTemplate, ParticipantsTemplate},
+};
 
 /// Routes available for '/participants' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
@@ -42,18 +45,6 @@ pub async fn post_create_participant(
 
     Ok(Html("Participant Created!".to_string()))
 }
-
-// -- Templates
-
-#[derive(Template)]
-#[template(path = "participants.html")]
-struct ParticipantsTemplate {
-    participants: Vec<Participant>,
-}
-
-#[derive(Template)]
-#[template(path = "partials/participants/create_participant.html")]
-struct CreateParticipantTemplate {}
 
 #[derive(Deserialize, Debug)]
 pub struct CreateParticipantInput {

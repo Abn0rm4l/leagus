@@ -1,16 +1,14 @@
-use askama::Template;
 use axum::extract::{Path, State};
 use axum::response::Html;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
-use leagus::models::{
-    League, LeagueId, ParticipantId, PointsTable, PointsTableEntry, Season, Session,
-};
+use leagus::models::{LeagueId, ParticipantId, PointsTable, PointsTableEntry};
 use leagus::persistence::WriteableStore;
 
 use crate::errors::LeagusError;
 use crate::state::AppState;
+use crate::templates::{LeagueContentTemplate, LeagueTemplate, LeaguesFullTemplate};
 
 /// Routes available for '/leagues' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
@@ -110,32 +108,4 @@ async fn get_by_id(
             }
         }
     }
-}
-
-// -- Templates
-
-#[derive(Template)]
-#[template(path = "leagues.html")]
-struct LeaguesFullTemplate {
-    leagues: Vec<League>,
-}
-
-#[derive(Template)]
-#[template(path = "partials/leagues/single_content.html")]
-struct LeagueContentTemplate {
-    league: League,
-    seasons: Vec<Season>,
-    active_season: Option<Season>,
-    active_session: Option<Session>,
-    points_table: PointsTable,
-}
-
-#[derive(Template)]
-#[template(path = "league.html")]
-struct LeagueTemplate {
-    league: League,
-    seasons: Vec<Season>,
-    active_season: Option<Season>,
-    active_session: Option<Session>,
-    points_table: PointsTable,
 }
