@@ -13,6 +13,15 @@ pub struct Participant {
     pub name: String,
 }
 
+impl Participant {
+    pub fn new(name: String) -> Participant {
+        Participant {
+            id: ParticipantId::new(),
+            name,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

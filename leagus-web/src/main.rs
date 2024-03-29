@@ -1,5 +1,5 @@
 use axum::Router;
-use handlers::{api, leagues, matches, root, seasons, sessions, venues};
+use handlers::{api, leagues, matches, participants, root, seasons, sessions, venues};
 use state::AppState;
 use tower_http::services::ServeDir;
 
@@ -19,6 +19,7 @@ async fn main() {
         .nest("/sessions", sessions::routes(state.clone()))
         .nest("/matches", matches::routes())
         .nest("/venues", venues::routes())
+        .nest("/participants", participants::routes(state.clone()))
         .nest_service("/assets", ServeDir::new("assets"));
 
     // run our app with hyper, listening globally on port 3000

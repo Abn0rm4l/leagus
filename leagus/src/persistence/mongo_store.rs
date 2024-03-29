@@ -3,7 +3,9 @@ use mongodb::error::Result;
 use mongodb::options::ClientOptions;
 use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
 
-use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, SessionId, Venue};
+use crate::models::{
+    League, LeagueId, Match, Participant, Round, Season, SeasonId, Session, SessionId, Venue,
+};
 use crate::persistence::WriteableStore;
 
 /// Name of the MongoDB Database
@@ -16,6 +18,7 @@ const COLLECTION_SESSIONS: &str = "sessions";
 const COLLECTION_ROUNDS: &str = "rounds";
 const COLLECTION_MATCHES: &str = "matches";
 const COLLECTION_VENUES: &str = "venues";
+const COLLECTION_PARTICIPANTS: &str = "participants";
 
 #[derive(Clone)]
 pub struct MongoStore {
@@ -79,14 +82,14 @@ impl MongoStore {
 
     /// Bootstrap the rounds collection
     async fn bootstrap_rounds(&self) {
-        let collection = round_collection(self);
+        let collection = rounds_collection(self);
         let index = IndexModel::builder().keys(doc! {"session_id": 1}).build();
         let _ = collection.create_index(index, None).await;
     }
 
     /// Bootstrap the matches collection
     async fn bootstrap_matches(&self) {
-        let collection = match_collection(self);
+        let collection = matches_collection(self);
         let index = IndexModel::builder().keys(doc! {"round_id": 1}).build();
         let _ = collection.create_index(index, None).await;
     }
@@ -141,18 +144,23 @@ impl WriteableStore for MongoStore {
     }
 
     async fn create_round(&self, round: &Round) {
-        let rounds = round_collection(self);
+        let rounds = rounds_collection(self);
         let _ = rounds.insert_one(round, None).await;
     }
 
     async fn create_match(&self, a_match: &Match) {
-        let matches = match_collection(self);
+        let matches = matches_collection(self);
         let _ = matches.insert_one(a_match, None).await;
     }
 
     async fn create_venue(&self, venue: &Venue) {
-        let venues = venue_collection(self);
+        let venues = venues_collection(self);
         let _ = venues.insert_one(venue, None).await;
+    }
+
+    async fn create_participant(&self, participant: &Participant) {
+        let participants = participants_collection(self);
+        let _ = participants.insert_one(participant, None).await;
     }
 
     async fn get_league(&self, league_id: &LeagueId) -> Option<League> {
@@ -298,6 +306,22 @@ impl WriteableStore for MongoStore {
             }
         }
     }
+
+    async fn list_participants(&self) -> Vec<Participant> {
+        let collection = participants_collection(self);
+        let result = collection.find(None, None).await;
+
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Participant>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!("Error finding participants, {:?}", error);
+                Vec::new()
+            }
+        }
+    }
 }
 
 // TODO: Check if this is needed with the async client?
@@ -328,19 +352,25 @@ fn sessions_collection(store: &MongoStore) -> Collection<Session> {
 }
 
 /// Return a handle to the MongoDB Rounds Collection
-fn round_collection(store: &MongoStore) -> Collection<Round> {
+fn rounds_collection(store: &MongoStore) -> Collection<Round> {
     let db = store.client.database(DB_NAME);
     db.collection::<Round>(COLLECTION_ROUNDS)
 }
 
 /// Return a handle to the MongoDB Matches Collection
-fn match_collection(store: &MongoStore) -> Collection<Match> {
+fn matches_collection(store: &MongoStore) -> Collection<Match> {
     let db = store.client.database(DB_NAME);
     db.collection::<Match>(COLLECTION_MATCHES)
 }
 
 /// Return a handle to the MongoDB Matches Collection
-fn venue_collection(store: &MongoStore) -> Collection<Venue> {
+fn venues_collection(store: &MongoStore) -> Collection<Venue> {
     let db = store.client.database(DB_NAME);
     db.collection::<Venue>(COLLECTION_VENUES)
+}
+
+/// Return a handle to the MongoDB Matches Collection
+fn participants_collection(store: &MongoStore) -> Collection<Participant> {
+    let db = store.client.database(DB_NAME);
+    db.collection::<Participant>(COLLECTION_PARTICIPANTS)
 }

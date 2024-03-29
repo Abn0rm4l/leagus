@@ -1,7 +1,9 @@
 pub mod mongo_store;
 pub mod sync;
 
-use crate::models::{League, LeagueId, Match, Round, Season, SeasonId, Session, SessionId, Venue};
+use crate::models::{
+    League, LeagueId, Match, Participant, Round, Season, SeasonId, Session, SessionId, Venue,
+};
 
 /// Defines interactions with a write store.
 ///
@@ -28,6 +30,9 @@ pub trait WriteableStore {
     /// Create a new [`Venue`].
     async fn create_venue(&self, venue: &Venue);
 
+    /// Create a new [`Participant`].
+    async fn create_participant(&self, participant: &Participant);
+
     /// Get the [`League`] from the store with the matching ID.
     async fn get_league(&self, league_id: &LeagueId) -> Option<League>;
 
@@ -49,4 +54,6 @@ pub trait WriteableStore {
 
     async fn list_sessions(&self) -> Vec<Session>;
     async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
+
+    async fn list_participants(&self) -> Vec<Participant>;
 }
