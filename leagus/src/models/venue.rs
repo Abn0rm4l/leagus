@@ -12,6 +12,15 @@ pub struct Venue {
     pub name: String,
 }
 
+impl Venue {
+    pub fn new(name: String) -> Venue {
+        Venue {
+            id: VenueId::new(),
+            name,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.

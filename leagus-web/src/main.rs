@@ -18,7 +18,7 @@ async fn main() {
         .nest("/seasons", seasons::routes(state.clone()))
         .nest("/sessions", sessions::routes(state.clone()))
         .nest("/matches", matches::routes())
-        .nest("/venues", venues::routes())
+        .nest("/venues", venues::routes(state.clone()))
         .nest("/participants", participants::routes(state.clone()))
         .nest_service("/assets", ServeDir::new("assets"));
 
