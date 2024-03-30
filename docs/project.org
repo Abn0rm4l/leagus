@@ -2,88 +2,53 @@
 #+options: h:1 num:nil toc:nil
 
 * Overview
-The goal of the project is to build software for the purpose of managing and tracking various types of leagues.
+The goal of the project is to build a tool for managing and tracking various types of leagues.
 
-* Milestones [1/4]
+* Milestones [9/12]
 ** DONE store and retrieve a document via the cli
 CLOSED: [2024-02-25 Sun 17:55]
-** TODO store and retrieve a document via the api
-** TODO CRUD operations available in cli
-*** TODO CRUD available for leagues
-**** DONE list
-CLOSED: [2024-02-25 Sun 18:41]
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for seasons
-**** DONE list
-CLOSED: [2024-02-25 Sun 18:41]
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for sessions
-**** DONE list
-CLOSED: [2024-02-25 Sun 18:41]
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for matches
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for venues
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for participants
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-** TODO CRUD operations available in api
-*** TODO CRUD available for leagues
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for seasons
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for sessions
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for matches
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for venues
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
-*** TODO CRUD available for participants
-**** TODO list
-**** TODO get
-**** TODO update
-**** TODO delete
+** DONE store and retrieve a document via the api
+CLOSED: [2024-03-18 Mon 17:43]
+** DONE a user can view a list of leagues
+** TODO a user can add a new league
+** DONE a user can view a list of participants
+** DONE a user can add a new participant
+CLOSED: [2024-03-30 Sat 12:32]
+** DONE a user can view a list of venues
+** DONE a user can add a new venue
+CLOSED: [2024-03-30 Sat 12:32]
+** IN-PROGRESS a user can view details of the active season
+*** IN-PROGRESS a user can view the points table for the season
+*** IN-PROGRESS a user can view details of the active session
+** DONE a user can start a new season
+CLOSED: [2024-03-30 Sat 12:39]
+** DONE a user can start a new session
+CLOSED: [2024-03-30 Sat 12:39]
+** TODO a user can start a new round
+** TODO a user can manually create matches for a round
+** TODO a user can create matches using a match-making algorithm
+** TODO a user can submit a result of a match and have it reflected in the points table
+Initially the scoring algorithm will be fixed but later on the tool should support other ways of scoring.
 * Tasks
-** Core [0/2]
-*** TODO support async contexts
+** Core [1/2]
+*** DONE support async contexts
+CLOSED: [2024-03-18 Mon 17:42]
 This is needed for the web API as both Actix and Axum use an async runtime which does not work with the synchronous mongodb client.
-*** TODO add pagination support to list apis
-** CLI [0/0]
-** API [0/2]
-*** IN-PROGRESS add stub handlers for paths
-Set up all the api paths and add stub handlers with some data to be used for testing.
-*** TODO add pagination support to list apis
-** APP
+*** TODO parametrize mongodb connection options
+*** TODO implement match making with PTC algorithm
+*** TODO implement points scoring with PTC algorithm
+** Web [0/4]
+*** IN-PROGRESS display the points table for the active season
+**** DONE using fake data
+CLOSED: [2024-03-27 Wed 14:11]
+**** using real data
+*** TODO implement manual match creation
+*** TODO add logging
+*** TODO add more errors and error pages
+*** TODO configure the app via env vars and toml config
+The mongodb connection string should eventually move out of being hardcoded in the core lib and into configuration.
+*** TODO add a global 404 page
+Any unknown urls should redirect to the global 404 page.
 * Design
 ** Domain Model
 The basic domain model could be as follows.
