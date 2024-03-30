@@ -1,0 +1,49 @@
+#+title: Leagus: A league management tool
+#+options: h:1 num:nil toc:nil
+* Development
+** Configure the Rust environment
+*** Install Rust and Cargo
+We'll install both using [[https://rustup.rs/][rustup]].
+
+[[https://doc.rust-lang.org/cargo/getting-started/installation.html][Installation - The Cargo Book]]
+
+#+begin_src sh
+  curl https://sh.rustup.rs -sSf | sh
+#+end_src
+
+*** Useful tools (optional)
+[[https://github.com/watchexec/cargo-watch][cargo-watch]]
+#+begin_src sh
+  cargo install cargo-watch
+#+end_src
+
+** Build and run
+*** Run cargo check and test
+Use ~cargo watch~ to run ~cargo test~ and ~cargo check~ on the workspace after any edit is made.
+
+#+begin_src sh
+  cargo watch -c -x "check --workspace" -x "text --workspace"
+#+end_src
+
+*** Install Podman or Docker
+To run the dev mongodb containers you will need to install either Podman or Docker.
+
+https://podman.io/docs/installation
+
+*** Start the containers with via the docker-compose.yml
+#+begin_src sh
+  podman compose up
+#+end_src
+
+#+begin_src sh
+  podman ps
+#+end_src
+
+*** Run the web server
+Again, use ~cargo watch~ to build/run the server on any change.
+
+#+begin_src sh
+  cargo watch -c -x "run --bin leagus-web"
+#+end_src
+
+It should now be available on ~http://localhost:3000~.
