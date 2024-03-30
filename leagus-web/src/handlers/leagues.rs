@@ -8,7 +8,10 @@ use leagus::persistence::WriteableStore;
 
 use crate::errors::LeagusError;
 use crate::state::AppState;
-use crate::templates::{LeagueContentTemplate, LeagueTemplate, LeaguesFullTemplate};
+use crate::templates::{
+    LeagueContentTemplate, LeagueTemplate, LeaguesFullTemplate, PointsTableTemplate,
+    SessionTemplate,
+};
 
 /// Routes available for '/leagues' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
@@ -67,6 +70,7 @@ async fn get_by_id(
 
     entries.sort_by(|a, b| a.points.cmp(&b.points).reverse());
     let points_table = PointsTable { entries };
+    let points_table_template = PointsTableTemplate { points_table };
 
     match league {
         None => Err(LeagusError::Internal), // TODO: Return better error
@@ -83,25 +87,25 @@ async fn get_by_id(
                 _ => None,
             };
 
+            let session_template = SessionTemplate {
+                active_session,
+                active_season: active_season.clone(),
+            };
+
+            let league_content_template = LeagueContentTemplate {
+                league,
+                seasons,
+                active_season,
+                points_table_template,
+                session_template,
+            };
+
             if boosted || hxrequest {
-                Ok(Html(
-                    LeagueContentTemplate {
-                        league,
-                        seasons,
-                        points_table,
-                        active_season,
-                        active_session,
-                    }
-                    .to_string(),
-                ))
+                Ok(Html(league_content_template.to_string()))
             } else {
                 Ok(Html(
                     LeagueTemplate {
-                        league,
-                        seasons,
-                        points_table,
-                        active_season,
-                        active_session,
+                        league_content_template,
                     }
                     .to_string(),
                 ))

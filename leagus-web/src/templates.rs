@@ -13,18 +13,27 @@ pub struct LeagueContentTemplate {
     pub league: League,
     pub seasons: Vec<Season>,
     pub active_season: Option<Season>,
-    pub active_session: Option<Session>,
-    pub points_table: PointsTable,
+    pub points_table_template: PointsTableTemplate,
+    pub session_template: SessionTemplate,
 }
 
 #[derive(Template)]
 #[template(path = "league.html")]
 pub struct LeagueTemplate {
-    pub league: League,
-    pub seasons: Vec<Season>,
-    pub active_season: Option<Season>,
-    pub active_session: Option<Session>,
+    pub league_content_template: LeagueContentTemplate,
+}
+
+#[derive(Template)]
+#[template(path = "partials/seasons/points_table.html")]
+pub struct PointsTableTemplate {
     pub points_table: PointsTable,
+}
+
+#[derive(Template)]
+#[template(path = "partials/sessions/single_session.html")]
+pub struct SessionTemplate {
+    pub active_session: Option<Session>,
+    pub active_season: Option<Season>,
 }
 
 #[derive(Template)]

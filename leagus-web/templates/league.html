@@ -4,5 +4,5 @@
 {% include "partials/navbar.html" %}
 {% endblock header %}
 {% block content %}
-{% include "partials/leagues/single_content.html" %}
+{{ league_content_template|safe }}
 {% endblock %}

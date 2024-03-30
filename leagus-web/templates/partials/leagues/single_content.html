@@ -70,13 +70,9 @@
 </div>
 <div class="divider divider-start">Table</div>
 <div class="container ml-2">
-  {% include "partials/seasons/points_table.html" %}
+  {{ points_table_template|safe }}
 </div>
 <div class="divider divider-start">Session</div>
 <div class="container ml-2">
-  {% if active_session.is_none() %}
-  {% include "partials/sessions/no_session.html" %}
-  {% else %}
-  {% include "partials/sessions/single_session.html" %}
-  {% endif %}
+  {{ session_template|safe }}
 </div>
