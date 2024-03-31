@@ -4,23 +4,52 @@
 {% include "partials/navbar.html" %}
 {% endblock header %}
 {% block content %}
-  <table class="table">
-    <!-- head -->
-    <thead>
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for league in leagues %}
-      <tr class="hover" hx-get="/leagues/{{ league.id }}" hx-target="#content">
-        <th>{{ loop.index }}</th>
-        <td>{{ league.name }}</td>
-        <td>{{ league.description }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<ol
+  class="flex items-center whitespace-nowrap mb-2 text-xs border-b-2 border-gray-200 dark:border-gray-700 md:text-sm"
+  aria-label="Breadcrumb"
+>
+  <li
+    class="inline-flex items-center text-sm font-semibold text-gray-800 truncate dark:text-gray-200"
+    aria-current="page"
+  >
+      Leagues
+  </li>
+</ol>
+
+<div class="flex flex-col">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div class="overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+              >
+                Name
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for league in leagues %}
+            <tr
+              class="hover:bg-gray-100 dark:hover:bg-gray-700"
+              hx-get="/leagues/{{ league.id }}"
+              hx-target="#content"
+            >
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200"
+              >
+              {{ league.name }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -4,6 +4,18 @@
 {% include "partials/navbar.html" %}
 {% endblock header %}
 {% block content %}
+<ol
+  class="flex items-center whitespace-nowrap mb-2 text-xs border-b-2 border-gray-200 dark:border-gray-700 md:text-sm"
+  aria-label="Breadcrumb"
+>
+  <li
+    class="inline-flex items-center text-sm font-semibold text-gray-800 truncate dark:text-gray-200"
+    aria-current="page"
+  >
+  Venues
+  </li>
+</ol>
+
 <button
   type="button"
   id="new-venue-btn"
@@ -29,18 +41,40 @@
   </div>
 </dialog>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for venue in venues %}
-    <tr class="hover" hx-get="/venues/{{ venue.id }}" hx-target="#content">
-      <td>{{ venue.name }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="flex flex-col">
+  <div class="-m-1.5 overflow-x-auto">
+    <div class="p-1.5 min-w-full inline-block align-middle">
+      <div class="overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+              >
+                Name
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for venue in venues %}
+            <tr
+              class="hover:bg-gray-100 dark:hover:bg-gray-700"
+              hx-get="/venues/{{ venue.id }}"
+              hx-target="#content"
+            >
+              <td
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200"
+              >
+              {{ venue.name }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
