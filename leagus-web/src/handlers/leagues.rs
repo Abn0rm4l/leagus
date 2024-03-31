@@ -1,10 +1,13 @@
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::response::Html;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
-use leagus::models::{LeagueId, ParticipantId, PointsTable, PointsTableEntry};
+use leagus::models::{
+    League, LeagueId, ParticipantId, PointsTable, PointsTableEntry, Season, SeasonId,
+};
 use leagus::persistence::WriteableStore;
+use serde::Deserialize;
 
 use crate::errors::LeagusError;
 use crate::state::AppState;
@@ -17,7 +20,7 @@ use crate::templates::{
 pub fn routes<S>(state: AppState) -> Router<S> {
     Router::new()
         .route("/", get(list))
-        .route("/:league_id", get(get_by_id))
+        .route("/:league_id", get(get_league))
         .with_state(state)
 }
 
@@ -28,13 +31,16 @@ async fn list(State(state): State<AppState>) -> Result<Html<String>, LeagusError
     Ok(Html(LeaguesFullTemplate { leagues }.to_string()))
 }
 
-async fn get_by_id(
+async fn get_league(
     State(state): State<AppState>,
     HxRequest(hxrequest): HxRequest,
     HxBoosted(boosted): HxBoosted,
+    params: Option<Query<GetQueryParams>>,
     Path(league_id): Path<Uuid>,
 ) -> Result<Html<String>, LeagusError> {
+    //TODO: Add proper logging
     println!("Getting page for league: {league_id}");
+    println!("with query params {:?}", params);
 
     let store = &state.store;
     let league_id = LeagueId::from(league_id);
@@ -75,11 +81,7 @@ async fn get_by_id(
     match league {
         None => Err(LeagusError::Internal), // TODO: Return better error
         Some(league) => {
-            let active_season = seasons
-                .iter()
-                .find(|x| Some(x.id) == league.active_season)
-                .cloned();
-
+            let active_season = get_target_season(&seasons, &league, params.as_ref());
             let active_session_id = active_season.clone().and_then(|x| x.active_session);
 
             let active_session = match active_session_id {
@@ -112,4 +114,29 @@ async fn get_by_id(
             }
         }
     }
+}
+
+/// Get the target season to display
+///
+/// If a season_id is provided in the query params then that will become the target season,
+/// otherwise if the league has an active season set that will become the target season.
+fn get_target_season(
+    seasons: &[Season],
+    league: &League,
+    params: Option<&Query<GetQueryParams>>,
+) -> Option<Season> {
+    let target_season_id = params
+        .and_then(|p| p.season_id)
+        .map(SeasonId::from)
+        .or(league.active_season);
+
+    seasons
+        .iter()
+        .find(|x| Some(x.id) == target_season_id)
+        .cloned()
+}
+
+#[derive(Deserialize, Debug)]
+struct GetQueryParams {
+    season_id: Option<Uuid>,
 }
