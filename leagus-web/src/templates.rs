@@ -24,6 +24,15 @@ pub struct LeagueTemplate {
 }
 
 #[derive(Template)]
+#[template(path = "seasons_for_league.html")]
+pub struct SeasonsForLeagueTemplate {
+    pub league: League,
+    pub seasons: Vec<Season>,
+    /// Just used for the breadcrumbs
+    pub active_season: Option<Season>,
+}
+
+#[derive(Template)]
 #[template(path = "partials/seasons/points_table.html")]
 pub struct PointsTableTemplate {
     pub points_table: PointsTable,

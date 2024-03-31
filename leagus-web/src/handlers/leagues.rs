@@ -13,7 +13,7 @@ use crate::errors::LeagusError;
 use crate::state::AppState;
 use crate::templates::{
     LeagueContentTemplate, LeagueTemplate, LeaguesFullTemplate, PointsTableTemplate,
-    SessionTemplate,
+    SeasonsForLeagueTemplate, SessionTemplate,
 };
 
 /// Routes available for '/leagues' path.
@@ -21,6 +21,7 @@ pub fn routes<S>(state: AppState) -> Router<S> {
     Router::new()
         .route("/", get(list))
         .route("/:league_id", get(get_league))
+        .route("/:league_id/seasons", get(get_seasons_for_league))
         .with_state(state)
 }
 
@@ -113,6 +114,29 @@ async fn get_league(
                 ))
             }
         }
+    }
+}
+
+/// Display the [`Season`]s associated with a [`League`]
+async fn get_seasons_for_league(
+    State(state): State<AppState>,
+    Path(league_id): Path<Uuid>,
+) -> Result<Html<String>, LeagusError> {
+    let store = &state.store;
+    let league_id = LeagueId::from(league_id);
+    let league = store.get_league(&league_id).await;
+    let seasons = store.list_seasons_for_league(&league_id).await;
+
+    match league {
+        None => Err(LeagusError::Internal), // TODO: Return better error
+        Some(league) => Ok(Html(
+            SeasonsForLeagueTemplate {
+                league,
+                seasons,
+                active_season: None,
+            }
+            .to_string(),
+        )),
     }
 }
 
