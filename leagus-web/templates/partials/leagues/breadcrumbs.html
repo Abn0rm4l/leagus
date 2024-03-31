@@ -1,0 +1,70 @@
+<ol
+  class="flex items-center whitespace-nowrap mb-2 text-xs border-b-2 border-gray-200 dark:border-gray-700 md:text-sm"
+  aria-label="Breadcrumb"
+>
+  <li class="inline-flex items-center">
+    <a
+      class="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:focus:text-blue-500"
+      href="/leagues"
+    >
+      Leagues
+    </a>
+    <svg
+      class="flex-shrink-0 size-5 text-gray-400 dark:text-gray-600 mx-2"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path d="M6 13L10 3" stroke="currentColor" stroke-linecap="round" />
+    </svg>
+  </li>
+  <li class="inline-flex items-center">
+    <a
+      class="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:focus:text-blue-500"
+      href="/leagues/{{ league.id }}"
+    >
+      {{ league.name }}
+      <svg
+        class="flex-shrink-0 size-5 text-gray-400 dark:text-gray-600 mx-2"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path d="M6 13L10 3" stroke="currentColor" stroke-linecap="round" />
+      </svg>
+    </a>
+  </li>
+  {% if active_season.is_some() %}
+  <li class="inline-flex items-center">
+    <a
+      class="flex items-center text-sm text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 dark:focus:text-blue-500"
+      href="#"
+    >
+      Seasons
+    </a>
+    <svg
+      class="flex-shrink-0 size-5 text-gray-400 dark:text-gray-600 mx-2"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path d="M6 13L10 3" stroke="currentColor" stroke-linecap="round" />
+    </svg>
+  </li>
+  <li
+    class="inline-flex items-center text-sm font-semibold text-gray-800 truncate dark:text-gray-200"
+    aria-current="page"
+  >
+    {{ active_season.as_ref().unwrap().name }}
+  </li>
+  {% endif %}
+</ol>
