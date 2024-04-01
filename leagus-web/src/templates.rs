@@ -1,5 +1,5 @@
 use askama::Template;
-use leagus::models::{League, Participant, PointsTable, Season, Session, Venue};
+use leagus::models::{League, Match, Participant, PointsTable, Round, Season, Session, Venue};
 
 #[derive(Template)]
 #[template(path = "leagues.html")]
@@ -43,6 +43,13 @@ pub struct PointsTableTemplate {
 pub struct SessionTemplate {
     pub active_session: Option<Session>,
     pub active_season: Option<Season>,
+}
+
+//TODO: Give these better/clearer names
+#[derive(Template)]
+#[template(path = "partials/sessions/session_view.html")]
+pub struct SessionViewTemplate {
+    pub session: Session,
 }
 
 #[derive(Template)]
