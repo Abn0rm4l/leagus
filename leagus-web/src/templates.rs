@@ -50,6 +50,16 @@ pub struct SessionTemplate {
 #[template(path = "partials/sessions/session_view.html")]
 pub struct SessionViewTemplate {
     pub session: Session,
+    pub active_round: Option<Round>,
+    pub rounds: Vec<Round>,
+}
+
+#[derive(Template)]
+#[template(path = "partials/rounds/round_view.html")]
+pub struct RoundViewTemplate {
+    pub session: Session,
+    pub active_round: Option<Round>,
+    pub rounds: Vec<Round>,
 }
 
 #[derive(Template)]

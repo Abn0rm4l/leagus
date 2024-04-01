@@ -6,6 +6,7 @@ use axum::{
 };
 use bson::Uuid;
 use chrono::Utc;
+use futures::join;
 use leagus::{
     models::{SeasonId, Session, SessionId},
     persistence::WriteableStore,
@@ -58,11 +59,22 @@ pub async fn get_session(
 ) -> LeagusResult {
     let store = &state.store;
     let session_id = SessionId::from(session_id);
-    let session = store.get_session(&session_id).await;
+    let session = store.get_session(&session_id);
+    let rounds = store.list_rounds_for_session(&session_id);
+    // Fetch both together
+    let (session, rounds) = join!(session, rounds);
+    let active_round = rounds.last().cloned();
 
     match session {
         // TODO: Add better error, e.g. not found
         None => Err(LeagusError::Internal),
-        Some(session) => Ok(Html(SessionViewTemplate { session }.to_string())),
+        Some(session) => Ok(Html(
+            SessionViewTemplate {
+                session,
+                rounds,
+                active_round,
+            }
+            .to_string(),
+        )),
     }
 }

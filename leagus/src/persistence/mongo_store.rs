@@ -307,6 +307,32 @@ impl WriteableStore for MongoStore {
         }
     }
 
+    async fn list_rounds_for_session(&self, session_id: &SessionId) -> Vec<Round> {
+        let collection = rounds_collection(self);
+        let result = collection
+            .find(
+                doc! {
+                    "session_id": session_id
+                },
+                None,
+            )
+            .await;
+
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Round>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!(
+                    "Error finding seasons for league '{:?}', {:?}",
+                    session_id, error
+                );
+                Vec::new()
+            }
+        }
+    }
+
     async fn list_venues(&self) -> Vec<Venue> {
         let collection = venues_collection(self);
         let result = collection.find(None, None).await;

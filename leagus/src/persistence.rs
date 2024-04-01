@@ -55,6 +55,8 @@ pub trait WriteableStore {
     async fn list_sessions(&self) -> Vec<Session>;
     async fn list_sessions_for_season(&self, season_id: &SeasonId) -> Vec<Session>;
 
+    async fn list_rounds_for_session(&self, session_id: &SessionId) -> Vec<Round>;
+
     async fn list_venues(&self) -> Vec<Venue>;
 
     async fn list_participants(&self) -> Vec<Participant>;
