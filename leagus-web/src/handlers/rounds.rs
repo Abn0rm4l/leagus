@@ -1,24 +1,76 @@
 use axum::{
     extract::{Path, State},
     response::Html,
-    routing::post,
+    routing::{get, post},
     Router,
 };
 use bson::Uuid;
 use leagus::{
-    models::{Round, SessionId},
+    models::{Participant, ParticipantId, Round, RoundId, SessionId},
     persistence::WriteableStore,
 };
 
 use crate::{errors::LeagusError, state::AppState, templates::RoundViewTemplate};
+
+use super::participants;
 
 type LeagusResult = Result<Html<String>, LeagusError>;
 
 /// Routes available for '/rounds' path.
 pub fn routes<S>(state: AppState) -> Router<S> {
     Router::new()
+        .route("/:round_id", get(get_round))
         .route("/create/:session_id", post(create_round))
         .with_state(state)
+}
+
+pub async fn get_round(State(state): State<AppState>, Path(round_id): Path<Uuid>) -> LeagusResult {
+    let store = &state.store;
+    let round_id = RoundId::from(round_id);
+    let round = store.get_round(&round_id).await;
+
+    //TODO: Replace with real data
+    let participants = vec![
+        Participant {
+            id: ParticipantId::new(),
+            name: "Minnie".to_string(),
+        },
+        Participant {
+            id: ParticipantId::new(),
+            name: "Johnathan".to_string(),
+        },
+        Participant {
+            id: ParticipantId::new(),
+            name: "Charles".to_string(),
+        },
+        Participant {
+            id: ParticipantId::new(),
+            name: "Jess".to_string(),
+        },
+    ];
+
+    match round {
+        // TODO: Add better error, e.g. not found
+        None => Err(LeagusError::Internal),
+        Some(round) => {
+            let rounds = store.list_rounds_for_session(&round.session_id).await;
+            let session = store.get_session(&round.session_id).await;
+
+            if session.is_none() {
+                return Err(LeagusError::Internal);
+            }
+
+            Ok(Html(
+                RoundViewTemplate {
+                    session: session.expect("Session linked to round is missing"),
+                    rounds,
+                    active_round: Some(round),
+                    participants,
+                }
+                .to_string(),
+            ))
+        }
+    }
 }
 
 pub async fn create_round(
@@ -44,6 +96,7 @@ pub async fn create_round(
                     session,
                     rounds,
                     active_round: Some(round),
+                    participants: Vec::new(),
                 }
                 .to_string(),
             ))

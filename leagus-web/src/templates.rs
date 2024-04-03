@@ -52,6 +52,7 @@ pub struct SessionViewTemplate {
     pub session: Session,
     pub active_round: Option<Round>,
     pub rounds: Vec<Round>,
+    pub participants: Vec<Participant>,
 }
 
 #[derive(Template)]
@@ -60,6 +61,7 @@ pub struct RoundViewTemplate {
     pub session: Session,
     pub active_round: Option<Round>,
     pub rounds: Vec<Round>,
+    pub participants: Vec<Participant>,
 }
 
 #[derive(Template)]

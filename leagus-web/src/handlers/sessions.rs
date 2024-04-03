@@ -73,6 +73,7 @@ pub async fn get_session(
                 session,
                 rounds,
                 active_round,
+                participants: Vec::new(),
             }
             .to_string(),
         )),

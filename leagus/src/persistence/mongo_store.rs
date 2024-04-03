@@ -4,7 +4,8 @@ use mongodb::options::ClientOptions;
 use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
 
 use crate::models::{
-    League, LeagueId, Match, Participant, Round, Season, SeasonId, Session, SessionId, Venue,
+    League, LeagueId, Match, Participant, Round, RoundId, Season, SeasonId, Session, SessionId,
+    Venue,
 };
 use crate::persistence::WriteableStore;
 
@@ -201,6 +202,17 @@ impl WriteableStore for MongoStore {
         let result = sessions.find_one(
             doc! {
                 "_id": session_id
+            },
+            None,
+        );
+        result.await.ok().unwrap_or_default()
+    }
+
+    async fn get_round(&self, round_id: &RoundId) -> Option<Round> {
+        let rounds = rounds_collection(self);
+        let result = rounds.find_one(
+            doc! {
+                "_id": round_id
             },
             None,
         );
