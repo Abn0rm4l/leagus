@@ -4,8 +4,8 @@ use mongodb::options::ClientOptions;
 use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
 
 use crate::models::{
-    League, LeagueId, Match, Participant, Round, RoundId, Season, SeasonId, Session, SessionId,
-    Venue,
+    League, LeagueId, Match, Participant, ParticipantId, Round, RoundId, Season, SeasonId, Session,
+    SessionId, Venue,
 };
 use crate::persistence::WriteableStore;
 
@@ -372,6 +372,56 @@ impl WriteableStore for MongoStore {
                 .collect(),
             Err(error) => {
                 println!("Error finding participants, {:?}", error);
+                Vec::new()
+            }
+        }
+    }
+
+    async fn list_participants_for_round(&self, round_id: &RoundId) -> Vec<Participant> {
+        let round = self.get_round(round_id).await;
+
+        // TODO: Should be an error.
+        //
+        // The round does not exist.
+        if round.is_none() {
+            return Vec::new();
+        }
+
+        let round = round.expect("Round should be Some here");
+        let collection = participants_collection(self);
+
+        let participants: Vec<bson::Document> = round
+            .participants
+            .into_iter()
+            .map(|id| doc! { "_id": id })
+            .collect();
+
+        // Query for multiple documents by ID needs to be in the form of;
+        // {
+        //   $or: [
+        //     { _id: "id" },
+        //   ]
+        // }
+
+        let result = collection
+            .find(
+                doc! {
+                    "$or": participants
+                },
+                None,
+            )
+            .await;
+
+        match result {
+            Ok(cursor) => (cursor.collect::<Vec<Result<Participant>>>().await)
+                .into_iter()
+                .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
+                .collect(),
+            Err(error) => {
+                println!(
+                    "Error finding participants for round '{:?}', {:?}",
+                    round_id, error
+                );
                 Vec::new()
             }
         }

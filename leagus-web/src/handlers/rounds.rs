@@ -30,7 +30,7 @@ pub async fn get_round(State(state): State<AppState>, Path(round_id): Path<Uuid>
     let round = store.get_round(&round_id).await;
 
     //TODO: Replace with real data
-    let participants = vec![
+    let mut fake_participants = vec![
         Participant {
             id: ParticipantId::new(),
             name: "Minnie".to_string(),
@@ -48,6 +48,11 @@ pub async fn get_round(State(state): State<AppState>, Path(round_id): Path<Uuid>
             name: "Jess".to_string(),
         },
     ];
+
+    let mut participants = store.list_participants_for_round(&round_id).await;
+
+    // TODO: Remove when done testing
+    participants.append(&mut fake_participants);
 
     match round {
         // TODO: Add better error, e.g. not found

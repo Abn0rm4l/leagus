@@ -65,6 +65,12 @@ pub async fn get_session(
     let (session, rounds) = join!(session, rounds);
     let active_round = rounds.last().cloned();
 
+    //TODO: Use the RoundViewTemplate
+    let participants = match &active_round {
+        Some(round) => store.list_participants_for_round(&round.id).await,
+        None => Vec::new(),
+    };
+
     match session {
         // TODO: Add better error, e.g. not found
         None => Err(LeagusError::Internal),
@@ -73,7 +79,7 @@ pub async fn get_session(
                 session,
                 rounds,
                 active_round,
-                participants: Vec::new(),
+                participants,
             }
             .to_string(),
         )),
