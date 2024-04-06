@@ -1,5 +1,7 @@
 use askama::Template;
-use leagus::models::{League, Match, Participant, PointsTable, Round, Season, Session, Venue};
+use leagus::models::{
+    League, Match, Participant, PointsTable, Round, RoundId, Season, Session, Venue,
+};
 
 #[derive(Template)]
 #[template(path = "leagues.html")]
@@ -61,6 +63,13 @@ pub struct RoundViewTemplate {
     pub session: Session,
     pub active_round: Option<Round>,
     pub rounds: Vec<Round>,
+    pub participants: Vec<Participant>,
+}
+
+#[derive(Template)]
+#[template(path = "partials/rounds/round_update_participants.html")]
+pub struct UpdateRoundParticipantsTemplate {
+    pub round_id: RoundId,
     pub participants: Vec<Participant>,
 }
 

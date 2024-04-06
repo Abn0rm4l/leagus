@@ -10,9 +10,11 @@ use leagus::{
     persistence::WriteableStore,
 };
 
-use crate::{errors::LeagusError, state::AppState, templates::RoundViewTemplate};
-
-use super::participants;
+use crate::{
+    errors::LeagusError,
+    state::AppState,
+    templates::{RoundViewTemplate, UpdateRoundParticipantsTemplate},
+};
 
 type LeagusResult = Result<Html<String>, LeagusError>;
 
@@ -20,6 +22,10 @@ type LeagusResult = Result<Html<String>, LeagusError>;
 pub fn routes<S>(state: AppState) -> Router<S> {
     Router::new()
         .route("/:round_id", get(get_round))
+        .route(
+            "/:round_id/update_participants",
+            get(get_update_participants),
+        )
         .route("/create/:session_id", post(create_round))
         .with_state(state)
 }
@@ -107,4 +113,29 @@ pub async fn create_round(
             ))
         }
     }
+}
+
+pub async fn get_update_participants(
+    State(state): State<AppState>,
+    Path(round_id): Path<Uuid>,
+) -> LeagusResult {
+    let store = &state.store;
+    let round_id = RoundId::from(round_id);
+    let round = store.get_round(&round_id).await;
+
+    if round.is_none() {
+        // TODO: Return bad argument error
+        return Err(LeagusError::Internal);
+    }
+
+    // fetch all participants
+    let participants = store.list_participants().await;
+
+    Ok(Html(
+        UpdateRoundParticipantsTemplate {
+            participants,
+            round_id,
+        }
+        .to_string(),
+    ))
 }

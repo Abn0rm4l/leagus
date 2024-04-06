@@ -1,8 +1,11 @@
-<div id="round-view" class="flex flex-col flex-1 bg-white dark:bg-gray-800">
+<div id="round-view" class="flex flex-col flex-1 flex-wrap bg-white dark:bg-gray-800">
   {% include "partials/rounds/round_nav.html" %}
 
-  <div id="round-content" class="flex flex-row mt-2">
-    {% include "partials/rounds/round_participants.html" %}
-    {% include "partials/rounds/round_matches.html" %}
-  </div>
+  {% if active_round.is_some() %}
+    {% let active_round = active_round.as_ref().expect("Active round must exist.") %}
+    <div id="round-content" class="flex flex-row mt-2">
+      {% include "partials/rounds/round_participants.html" %}
+      {% include "partials/rounds/round_matches.html" %}
+    </div>
+  {% endif %}
 </div>
