@@ -4,7 +4,7 @@ use super::ParticipantId;
 
 /// A participant capable of participating in matches. This could be an
 /// individual or team.
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[derive(Debug, Eq, Hash, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Participant {
     // Flatten will inline this field into its parent.
     // See https://serde.rs/attr-flatten.html

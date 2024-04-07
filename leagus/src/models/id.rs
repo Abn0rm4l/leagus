@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 /// Generic container for the various IDs.
 /// Each type of ID is really just a Uuid but is a distinct type.
 /// E.g. an ID<League> is a different type from ID<Season>.
-#[derive(Debug, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Eq, Hash, PartialEq, Serialize, Deserialize)]
 pub struct ID<T> {
     // The mongodb id field is named "_id"
     #[serde(rename = "_id")]

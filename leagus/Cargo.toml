@@ -9,6 +9,7 @@ description = "The Leagus league management tool"
 [dependencies]
 time = "0.3.34"
 clap = { version = "4.5.1", features = ["derive", "color", "cargo"] }
+itertools = "0.12.1"
 serde = "1.0.197"
 serde_json = "1.0.114"
 serde_with = "3.7.0"

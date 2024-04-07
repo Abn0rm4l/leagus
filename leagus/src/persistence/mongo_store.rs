@@ -1,4 +1,5 @@
 use futures::stream::StreamExt;
+use itertools::Itertools;
 use mongodb::error::Result;
 use mongodb::options::ClientOptions;
 use mongodb::{bson::doc, options::IndexOptions, Client, Collection, IndexModel};
@@ -164,6 +165,39 @@ impl WriteableStore for MongoStore {
         let _ = participants.insert_one(participant, None).await;
     }
 
+    async fn add_participant_to_round(&self, participant_id: &ParticipantId, round_id: &RoundId) {
+        let round = self.get_round(round_id).await;
+
+        if round.is_none() {
+            // TODO: Maybe return error?
+            return;
+        }
+
+        let mut round = round.expect("Round now exists.");
+
+        if round.participants.contains(participant_id) {
+            return;
+        }
+
+        round.participants.push(*participant_id);
+        round.participants = round.participants.into_iter().unique().collect();
+
+        // Update the round
+        let rounds = rounds_collection(self);
+        let _update_result = rounds
+            .replace_one(
+                doc! {
+                    "_id": &round_id
+                },
+                round,
+                // doc! {
+                //     "$set": { "participants": &round.participants }
+                // },
+                None,
+            )
+            .await;
+    }
+
     async fn get_league(&self, league_id: &LeagueId) -> Option<League> {
         let leagues = leagues_collection(self);
         let result = leagues.find_one(
@@ -213,6 +247,17 @@ impl WriteableStore for MongoStore {
         let result = rounds.find_one(
             doc! {
                 "_id": round_id
+            },
+            None,
+        );
+        result.await.ok().unwrap_or_default()
+    }
+
+    async fn get_participant(&self, parcipant_id: &ParticipantId) -> Option<Participant> {
+        let participants = participants_collection(self);
+        let result = participants.find_one(
+            doc! {
+                "_id": parcipant_id
             },
             None,
         );
@@ -395,6 +440,10 @@ impl WriteableStore for MongoStore {
             .into_iter()
             .map(|id| doc! { "_id": id })
             .collect();
+
+        if participants.is_empty() {
+            return Vec::new();
+        }
 
         // Query for multiple documents by ID needs to be in the form of;
         // {

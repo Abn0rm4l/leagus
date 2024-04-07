@@ -5,6 +5,7 @@ use axum::{
     Router,
 };
 use bson::Uuid;
+use futures::join;
 use leagus::{
     models::{Participant, ParticipantId, Round, RoundId, SessionId},
     persistence::WriteableStore,
@@ -25,6 +26,10 @@ pub fn routes<S>(state: AppState) -> Router<S> {
         .route(
             "/:round_id/update_participants",
             get(get_update_participants),
+        )
+        .route(
+            "/:round_id/add_participant/:participant_id",
+            post(add_participant_to_round),
         )
         .route("/create/:session_id", post(create_round))
         .with_state(state)
@@ -127,6 +132,39 @@ pub async fn get_update_participants(
         // TODO: Return bad argument error
         return Err(LeagusError::Internal);
     }
+
+    // fetch all participants
+    let participants = store.list_participants().await;
+
+    Ok(Html(
+        UpdateRoundParticipantsTemplate {
+            participants,
+            round_id,
+        }
+        .to_string(),
+    ))
+}
+
+pub async fn add_participant_to_round(
+    State(state): State<AppState>,
+    Path((round_id, participant_id)): Path<(Uuid, Uuid)>,
+) -> LeagusResult {
+    let store = &state.store;
+    let participant_id = ParticipantId::from(participant_id);
+    let round_id = RoundId::from(round_id);
+    let round = store.get_round(&round_id);
+    let participant = store.get_participant(&participant_id);
+    let (round, participant) = join!(round, participant);
+
+    if round.is_none() || participant.is_none() {
+        // TODO: Return bad argument error
+        return Err(LeagusError::Internal);
+    }
+
+    // add participant to the round
+    store
+        .add_participant_to_round(&participant_id, &round_id)
+        .await;
 
     // fetch all participants
     let participants = store.list_participants().await;
