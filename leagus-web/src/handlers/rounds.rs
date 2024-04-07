@@ -14,7 +14,7 @@ use leagus::{
 use crate::{
     errors::LeagusError,
     state::AppState,
-    templates::{RoundViewTemplate, UpdateRoundParticipantsTemplate},
+    templates::{RoundParticipantsTemplate, RoundViewTemplate, UpdateRoundParticipantsTemplate},
 };
 
 type LeagusResult = Result<Html<String>, LeagusError>;
@@ -39,31 +39,7 @@ pub async fn get_round(State(state): State<AppState>, Path(round_id): Path<Uuid>
     let store = &state.store;
     let round_id = RoundId::from(round_id);
     let round = store.get_round(&round_id).await;
-
-    //TODO: Replace with real data
-    let mut fake_participants = vec![
-        Participant {
-            id: ParticipantId::new(),
-            name: "Minnie".to_string(),
-        },
-        Participant {
-            id: ParticipantId::new(),
-            name: "Johnathan".to_string(),
-        },
-        Participant {
-            id: ParticipantId::new(),
-            name: "Charles".to_string(),
-        },
-        Participant {
-            id: ParticipantId::new(),
-            name: "Jess".to_string(),
-        },
-    ];
-
-    let mut participants = store.list_participants_for_round(&round_id).await;
-
-    // TODO: Remove when done testing
-    participants.append(&mut fake_participants);
+    let participants = store.list_participants_for_round(&round_id).await;
 
     match round {
         // TODO: Add better error, e.g. not found
@@ -82,6 +58,7 @@ pub async fn get_round(State(state): State<AppState>, Path(round_id): Path<Uuid>
                     rounds,
                     active_round: Some(round),
                     participants,
+                    update_participants_template: None,
                 }
                 .to_string(),
             ))
@@ -113,6 +90,7 @@ pub async fn create_round(
                     rounds,
                     active_round: Some(round),
                     participants: Vec::new(),
+                    update_participants_template: None,
                 }
                 .to_string(),
             ))
@@ -169,6 +147,7 @@ pub async fn add_participant_to_round(
         // TODO: Return bad argument error
         return Err(LeagusError::Internal);
     }
+    let round = round.expect("Round now exists.");
 
     // add participant to the round
     store
@@ -182,15 +161,22 @@ pub async fn add_participant_to_round(
     let (all_participants, round_participants) = join!(all_participants, round_participants);
 
     // Remove participants already added to the round
-    let participants = all_participants
+    let participants: Vec<Participant> = all_participants
         .into_iter()
         .filter(|x| !round_participants.contains(x))
         .collect();
 
+    let update_participants_template = Some(UpdateRoundParticipantsTemplate {
+        participants,
+        round_id,
+    });
+
     Ok(Html(
-        UpdateRoundParticipantsTemplate {
-            participants,
+        RoundParticipantsTemplate {
+            active_round: round,
             round_id,
+            participants: round_participants,
+            update_participants_template,
         }
         .to_string(),
     ))

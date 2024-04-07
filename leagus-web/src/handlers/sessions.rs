@@ -12,7 +12,11 @@ use leagus::{
     persistence::WriteableStore,
 };
 
-use crate::{errors::LeagusError, state::AppState, templates::SessionViewTemplate};
+use crate::{
+    errors::LeagusError,
+    state::AppState,
+    templates::{RoundViewTemplate, SessionViewTemplate},
+};
 
 type LeagusResult = Result<Html<String>, LeagusError>;
 
@@ -65,23 +69,30 @@ pub async fn get_session(
     let (session, rounds) = join!(session, rounds);
     let active_round = rounds.last().cloned();
 
+    if session.is_none() {
+        return Err(LeagusError::Internal);
+    }
+    let session = session.expect("Session should exist");
+
     //TODO: Use the RoundViewTemplate
     let participants = match &active_round {
         Some(round) => store.list_participants_for_round(&round.id).await,
         None => Vec::new(),
     };
 
-    match session {
-        // TODO: Add better error, e.g. not found
-        None => Err(LeagusError::Internal),
-        Some(session) => Ok(Html(
-            SessionViewTemplate {
-                session,
-                rounds,
-                active_round,
-                participants,
-            }
-            .to_string(),
-        )),
-    }
+    let round_view_template = RoundViewTemplate {
+        session: session.clone(),
+        active_round,
+        rounds,
+        participants,
+        update_participants_template: None,
+    };
+
+    Ok(Html(
+        SessionViewTemplate {
+            session,
+            round_view_template,
+        }
+        .to_string(),
+    ))
 }

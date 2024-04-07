@@ -3,7 +3,7 @@
   class="bg-gray-200 p-2 rounded shadow-gray-600 border-gray-600"
 >
   <div class="flex">
-    <section id="list-included-participants">
+    <section id="list-included-participants" class="min-w-60">
       <div
         class="flex flex-col -m-1.5 overflow-x-auto p-1.5 min-w-full align-middle"
       >
@@ -60,9 +60,14 @@
         </div>
       </div>
     </section>
+    {% let show_update = update_participants_template.is_some() %}
     <section
       id="update-participants"
-      class="hidden max-w-md transition-all duration-300"
-    ></section>
+      class="{% if !show_update %} hidden {% endif %} max-w-md transition-all duration-300"
+    >
+      {% if show_update %} {% let template =
+      update_participants_template.as_ref().unwrap() %} {{ template|safe }} {%
+      endif %}
+    </section>
   </div>
 </section>
