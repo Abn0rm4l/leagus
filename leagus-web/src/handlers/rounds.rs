@@ -134,7 +134,16 @@ pub async fn get_update_participants(
     }
 
     // fetch all participants
-    let participants = store.list_participants().await;
+    let all_participants = store.list_participants();
+    // fetch participants already added to the round
+    let round_participants = store.list_participants_for_round(&round_id);
+    let (all_participants, round_participants) = join!(all_participants, round_participants);
+
+    // Remove participants already added to the round
+    let participants = all_participants
+        .into_iter()
+        .filter(|x| !round_participants.contains(x))
+        .collect();
 
     Ok(Html(
         UpdateRoundParticipantsTemplate {
@@ -167,7 +176,16 @@ pub async fn add_participant_to_round(
         .await;
 
     // fetch all participants
-    let participants = store.list_participants().await;
+    let all_participants = store.list_participants();
+    // fetch participants already added to the round
+    let round_participants = store.list_participants_for_round(&round_id);
+    let (all_participants, round_participants) = join!(all_participants, round_participants);
+
+    // Remove participants already added to the round
+    let participants = all_participants
+        .into_iter()
+        .filter(|x| !round_participants.contains(x))
+        .collect();
 
     Ok(Html(
         UpdateRoundParticipantsTemplate {
