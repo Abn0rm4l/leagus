@@ -69,6 +69,6 @@ pub trait WriteableStore {
 
     async fn list_venues(&self) -> Vec<Venue>;
 
-    async fn list_participants(&self) -> Vec<Participant>;
+    async fn list_participants(&self, query_name: Option<String>) -> Vec<Participant>;
     async fn list_participants_for_round(&self, round_id: &RoundId) -> Vec<Participant>;
 }

@@ -406,9 +406,18 @@ impl WriteableStore for MongoStore {
         }
     }
 
-    async fn list_participants(&self) -> Vec<Participant> {
+    async fn list_participants(&self, query_name: Option<String>) -> Vec<Participant> {
         let collection = participants_collection(self);
-        let result = collection.find(None, None).await;
+
+        // Build a case-insensitive name filter.
+        let filter = query_name.map(|name| {
+            println!("Building filter for participants which match '{name}'");
+            doc! {
+                "name": { "$regex": name, "$options": "i"}
+            }
+        });
+
+        let result = collection.find(filter, None).await;
 
         match result {
             Ok(cursor) => (cursor.collect::<Vec<Result<Participant>>>().await)

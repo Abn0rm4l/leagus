@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     response::Html,
     routing::{get, post},
     Router,
@@ -10,6 +10,7 @@ use leagus::{
     models::{Participant, ParticipantId, Round, RoundId, SessionId},
     persistence::WriteableStore,
 };
+use serde::Deserialize;
 
 use crate::{
     errors::LeagusError,
@@ -101,6 +102,7 @@ pub async fn create_round(
 pub async fn get_update_participants(
     State(state): State<AppState>,
     Path(round_id): Path<Uuid>,
+    params: Option<Query<SearchParticipantsQueryParams>>,
 ) -> LeagusResult {
     let store = &state.store;
     let round_id = RoundId::from(round_id);
@@ -112,7 +114,12 @@ pub async fn get_update_participants(
     }
 
     // fetch all participants
-    let all_participants = store.list_participants();
+    let all_participants = params
+        .and_then(|p| p.query_name.clone())
+        .map(|name| store.list_participants(Some(name)))
+        .unwrap_or(store.list_participants(None));
+
+    // None => store.list_participants(None),
     // fetch participants already added to the round
     let round_participants = store.list_participants_for_round(&round_id);
     let (all_participants, round_participants) = join!(all_participants, round_participants);
@@ -155,7 +162,7 @@ pub async fn add_participant_to_round(
         .await;
 
     // fetch all participants
-    let all_participants = store.list_participants();
+    let all_participants = store.list_participants(None);
     // fetch participants already added to the round
     let round_participants = store.list_participants_for_round(&round_id);
     let (all_participants, round_participants) = join!(all_participants, round_participants);
@@ -180,4 +187,9 @@ pub async fn add_participant_to_round(
         }
         .to_string(),
     ))
+}
+
+#[derive(Deserialize, Debug)]
+pub struct SearchParticipantsQueryParams {
+    query_name: Option<String>,
 }

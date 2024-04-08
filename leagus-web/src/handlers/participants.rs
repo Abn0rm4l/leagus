@@ -21,7 +21,7 @@ pub fn routes<S>(state: AppState) -> Router<S> {
 
 async fn list(State(state): State<AppState>) -> Result<Html<String>, LeagusError> {
     let store = &state.store;
-    let participants = store.list_participants().await;
+    let participants = store.list_participants(None).await;
     Ok(Html(ParticipantsTemplate { participants }.to_string()))
 }
 
