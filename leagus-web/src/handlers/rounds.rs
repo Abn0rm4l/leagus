@@ -4,6 +4,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use axum_htmx::HxTarget;
 use bson::Uuid;
 use futures::join;
 use leagus::{
@@ -15,7 +16,10 @@ use serde::Deserialize;
 use crate::{
     errors::LeagusError,
     state::AppState,
-    templates::{RoundParticipantsTemplate, RoundViewTemplate, UpdateRoundParticipantsTemplate},
+    templates::{
+        RoundParticipantsTemplate, RoundViewTemplate, UpdateParticipantsListTemplate,
+        UpdateRoundParticipantsTemplate,
+    },
 };
 
 type LeagusResult = Result<Html<String>, LeagusError>;
@@ -102,6 +106,7 @@ pub async fn create_round(
 pub async fn get_update_participants(
     State(state): State<AppState>,
     Path(round_id): Path<Uuid>,
+    HxTarget(target): HxTarget,
     params: Option<Query<SearchParticipantsQueryParams>>,
 ) -> LeagusResult {
     let store = &state.store;
@@ -130,13 +135,21 @@ pub async fn get_update_participants(
         .filter(|x| !round_participants.contains(x))
         .collect();
 
-    Ok(Html(
-        UpdateRoundParticipantsTemplate {
+    // If the target is the search results then return only that partial
+    let template = match target.unwrap_or("".to_string()).as_str() {
+        "search-results" => UpdateParticipantsListTemplate {
+            round_id,
+            participants,
+        }
+        .to_string(),
+        _ => UpdateRoundParticipantsTemplate {
             participants,
             round_id,
         }
         .to_string(),
-    ))
+    };
+
+    Ok(Html(template))
 }
 
 pub async fn add_participant_to_round(

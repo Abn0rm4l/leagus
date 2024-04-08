@@ -82,6 +82,13 @@ pub struct UpdateRoundParticipantsTemplate {
 }
 
 #[derive(Template)]
+#[template(path = "partials/rounds/update_participants_list.html")]
+pub struct UpdateParticipantsListTemplate {
+    pub round_id: RoundId,
+    pub participants: Vec<Participant>,
+}
+
+#[derive(Template)]
 #[template(path = "participants.html")]
 pub struct ParticipantsTemplate {
     pub participants: Vec<Participant>,
