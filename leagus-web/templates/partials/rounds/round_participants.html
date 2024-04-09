@@ -25,15 +25,17 @@
           class="flex mt-2 rounded items-center justify-center bg-gray-300 text-gray-50 hover:bg-gray-400"
           hx-get="/rounds/{{ active_round.id }}/update_participants"
           hx-target="#update-participants"
-          _="on click toggle .hidden on #update-participants"
+          _="on click toggle .hidden on #update-participants
+             then toggle .opened on (<svg/> in me)"
         >
+          <!-- Show Icon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-5 h-5"
+            class="w-5 h-5 [&.opened]:-scale-y-100 transition-transform ease-in-out duration-300"
           >
             <path
               stroke-linecap="round"
