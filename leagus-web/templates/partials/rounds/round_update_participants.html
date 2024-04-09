@@ -1,37 +1,35 @@
-<div class="flex flex-col border-l border-l-gray-100 p-4">
+<div class="flex flex-col gap-4 border-t border-t-gray-100 p-4 min-w-fit">
   <search>
-    <div class="py-3 px-4">
-      <div class="relative max-w-xs">
-        <label for="query_name" class="sr-only">Search for participants</label>
-        <input
-          type="search"
-          name="query_name"
-          id="participants-search"
-          class="py-2 px-3 ps-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-          placeholder="Search for participants"
-          hx-get="/rounds/{{ round_id }}/update_participants"
-          hx-target="#search-results"
-          hx-trigger="input changed delay:300ms, search"
-        />
-        <div
-          class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3"
+    <div class="relative max-w-xs">
+      <label for="query_name" class="sr-only">Search for participants</label>
+      <input
+        type="search"
+        name="query_name"
+        id="participants-search"
+        class="py-2 px-3 ps-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+        placeholder="Search for participants"
+        hx-get="/rounds/{{ round_id }}/update_participants"
+        hx-target="#search-results"
+        hx-trigger="input changed delay:300ms, search"
+      />
+      <div
+        class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3"
+      >
+        <svg
+          class="size-4 text-gray-400"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          <svg
-            class="size-4 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.3-4.3"></path>
-          </svg>
-        </div>
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
       </div>
     </div>
   </search>

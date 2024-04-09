@@ -1,12 +1,12 @@
-<div class="grid grid-cols-2 gap-2">
+<div class="grid md:grid-cols-2 lg:grid-cols-3 min-w-full gap-2 md:gap-3">
   {% for participant in participants %}
   <div
-    class="flex items-center bg-gray-50 rounded gap-1 px-2 py-1 text-sm text-gray-700 hover:text-bold hover:bg-gray-100"
+    class="flex items-center bg-gray-50 min-w-52 max-w-xs rounded gap-1 px-2 py-2 text-sm text-gray-800 cursor-default hover:text-bold hover:bg-gray-100"
     hx-post="/rounds/{{ round_id }}/add_participant/{{ participant.id }}"
     hx-target="#participants"
     hx-swap="outerHTML"
   >
-    <div>
+    <div class="text-gray-400">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"

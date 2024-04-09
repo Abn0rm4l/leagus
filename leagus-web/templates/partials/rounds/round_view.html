@@ -3,9 +3,9 @@
 
   {% if active_round.is_some() %}
     {% let active_round = active_round.as_ref().expect("Active round must exist.") %}
-    <div id="round-content" class="flex flex-row mt-2">
-      {% include "partials/rounds/round_participants.html" %}
+    <div id="round-content" class="flex flex-col mt-2">
       {% include "partials/rounds/round_matches.html" %}
+      {% include "partials/rounds/round_participants.html" %}
     </div>
   {% endif %}
 </div>
