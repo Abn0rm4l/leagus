@@ -2,14 +2,12 @@
   <nav id="tab-list" class="flex space-x-2" aria-label="Tabs" role="tablist">
     <button
       type="button"
-      class="tab-active [&.tab-active]:font-semibold [&.tab-active]:border-blue-600 [&.tab-active]:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500"
+      class="tab-active [&.tab-active]:font-semibold [&.tab-active]:border-blue-600 [&.tab-active]:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 hover:border-gray-300 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500"
       id="points-table-tab-item"
       aria-controls="points-table-tab"
       role="tab"
-      _="on click remove .tab-active from <#tab-list > button/>
-        then add .tab-active to me
-        then add .hidden to <#tab-content > div/>
-        then remove .hidden from #points-table-tab"
+      _="on click take .tab-active from <#tab-list > button/>
+        then toggle .hidden on <#tab-content > div/>"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -27,15 +25,13 @@
     </button>
     <button
       type="button"
-      class="[&.tab-active]:font-semibold [&.tab-active]:border-blue-600 [&.tab-active]:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500"
+      class="[&.tab-active]:font-semibold [&.tab-active]:border-blue-600 [&.tab-active]:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 hover:border-gray-300 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-gray-400 dark:hover:text-blue-500"
       id="tab-item"
       aria-controls="tab"
       role="tab"
-      _="on click remove .tab-active from <#tab-list > button/>
-        then add .tab-active to me
-        then add .hidden to <#tab-content > div/>
-        then send loadContent to #session-content
-        then remove .hidden from #session-tab"
+      _="on click take .tab-active from <#tab-list > button/>
+        then toggle .hidden on <#tab-content > div/>
+        then send loadContent to #session-content"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
