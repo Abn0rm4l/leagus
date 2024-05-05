@@ -178,7 +178,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding leagues, {:?}", error);
+                tracing::error!("Error finding leagues, {:?}", error);
                 Vec::new()
             }
         }
@@ -193,7 +193,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding seasons, {:?}", error);
+                tracing::error!("Error finding seasons, {:?}", error);
                 Vec::new()
             }
         }
@@ -213,9 +213,10 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!(
+                tracing::warn!(
                     "Error finding seasons for league '{:?}', {:?}",
-                    league_id, error
+                    league_id,
+                    error
                 );
                 Vec::new()
             }
@@ -231,7 +232,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding sessions, {:?}", error);
+                tracing::warn!("Error finding sessions, {:?}", error);
                 Vec::new()
             }
         }
@@ -251,9 +252,10 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!(
-                    "Error finding seasons for league '{:?}', {:?}",
-                    season_id, error
+                tracing::warn!(
+                    "Error finding sessions for season '{:?}', {:?}",
+                    season_id,
+                    error
                 );
                 Vec::new()
             }

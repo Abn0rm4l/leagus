@@ -40,14 +40,14 @@ async fn get_league(
     Path(league_id): Path<Uuid>,
 ) -> Result<Html<String>, LeagusError> {
     //TODO: Add proper logging
-    println!("Getting page for league: {league_id}");
-    println!("with query params {:?}", params);
+    tracing::debug!("Getting page for league: {league_id}");
+    tracing::debug!("with query params {:?}", params);
 
     let store = &state.store;
     let league_id = LeagueId::from(league_id);
-    println!("Converted league_id to {league_id}");
+    tracing::debug!("Converted league_id to {league_id}");
     let league = store.get_league(&league_id).await;
-    println!("Found league: {:?}", league);
+    tracing::debug!("Found league: {:?}", league);
     let seasons = store.list_seasons_for_league(&league_id).await;
 
     // TODO: Provide real data

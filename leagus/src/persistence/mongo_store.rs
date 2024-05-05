@@ -274,7 +274,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok())
                 .collect::<Vec<League>>(),
             Err(error) => {
-                println!("Error finding leagues, {:?}", error);
+                tracing::error!("Error finding leagues, {:?}", error);
                 Vec::new()
             }
         }
@@ -290,7 +290,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out failures
                 .collect::<Vec<Season>>(),
             Err(error) => {
-                println!("Error finding seasons, {:?}", error);
+                tracing::warn!("Error finding seasons, {:?}", error);
                 Vec::new()
             }
         }
@@ -313,9 +313,10 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!(
+                tracing::warn!(
                     "Error finding seasons for league '{:?}', {:?}",
-                    league_id, error
+                    league_id,
+                    error
                 );
                 Vec::new()
             }
@@ -332,7 +333,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding sessions, {:?}", error);
+                tracing::error!("Error finding sessions, {:?}", error);
                 Vec::new()
             }
         }
@@ -355,9 +356,10 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!(
-                    "Error finding seasons for league '{:?}', {:?}",
-                    season_id, error
+                tracing::warn!(
+                    "Error finding session for season '{:?}', {:?}",
+                    season_id,
+                    error
                 );
                 Vec::new()
             }
@@ -381,9 +383,10 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!(
-                    "Error finding seasons for league '{:?}', {:?}",
-                    session_id, error
+                tracing::warn!(
+                    "Error finding rounds for session '{:?}', {:?}",
+                    session_id,
+                    error
                 );
                 Vec::new()
             }
@@ -400,7 +403,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding venues, {:?}", error);
+                tracing::error!("Error finding venues, {:?}", error);
                 Vec::new()
             }
         }
@@ -411,7 +414,7 @@ impl WriteableStore for MongoStore {
 
         // Build a case-insensitive name filter.
         let filter = query_name.map(|name| {
-            println!("Building filter for participants which match '{name}'");
+            tracing::debug!("Building filter for participants which match '{name}'");
             doc! {
                 "name": { "$regex": name, "$options": "i"}
             }
@@ -425,7 +428,7 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!("Error finding participants, {:?}", error);
+                tracing::error!("Error finding participants, {:?}", error);
                 Vec::new()
             }
         }
@@ -476,9 +479,10 @@ impl WriteableStore for MongoStore {
                 .filter_map(|x| x.ok()) // TODO: log out 'broken' docs
                 .collect(),
             Err(error) => {
-                println!(
+                tracing::warn!(
                     "Error finding participants for round '{:?}', {:?}",
-                    round_id, error
+                    round_id,
+                    error
                 );
                 Vec::new()
             }

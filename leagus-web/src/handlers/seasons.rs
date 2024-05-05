@@ -56,7 +56,7 @@ pub async fn post_create_season(
     Path(league_id): Path<Uuid>,
     Form(input): Form<CreateSeasonInput>,
 ) -> Result<Html<String>, LeagusError> {
-    println!("Create Season Input: {:?}", input);
+    tracing::debug!("Create Season Input: {:?}", input);
 
     // TODO: Maybe store these as NaiveDate, I don't think any value is gained from having it as
     // DateTime?

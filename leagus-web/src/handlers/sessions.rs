@@ -50,7 +50,7 @@ pub async fn post_create_session(
         None => Err(LeagusError::Internal),
         Some(_) => {
             store.create_session(&new_session).await;
-            println!("Creating session: {:?}", new_session);
+            tracing::info!("Created session: {:?}", new_session);
             //TODO: create a better response
             Ok(Html("Session Created".to_string()))
         }
