@@ -1,0 +1,11 @@
+[tasks.build-tailwindcss]
+command = "npx"
+args = ["tailwindcss", "-i", "./assets/input.css", "-o", "./assets/output.css"]
+
+[tasks.post-build]
+dependencies = ["build-tailwindcss"]
+
+[tasks.server]
+dependencies = ["dev-test-flow"]
+command = "cargo"
+args = ["run", "--bin", "leagus-web"]
