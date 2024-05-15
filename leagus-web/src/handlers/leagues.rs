@@ -1,5 +1,7 @@
 use axum::extract::{Path, Query, State};
 use axum::response::Html;
+use axum::routing::post;
+use axum::Form;
 use axum::{routing::get, Router};
 use axum_htmx::{HxBoosted, HxRequest};
 use bson::Uuid;
@@ -8,6 +10,7 @@ use leagus::models::{
 };
 use leagus::persistence::WriteableStore;
 use serde::Deserialize;
+use tracing::{debug, info};
 
 use crate::errors::LeagusError;
 use crate::state::AppState;
@@ -22,6 +25,7 @@ pub fn routes<S>(state: AppState) -> Router<S> {
         .route("/", get(list))
         .route("/:league_id", get(get_league))
         .route("/:league_id/seasons", get(get_seasons_for_league))
+        .route("/create", post(post_create_league))
         .with_state(state)
 }
 
@@ -138,6 +142,29 @@ async fn get_seasons_for_league(
             .to_string(),
         )),
     }
+}
+
+/// Post the form for creating new venue
+pub async fn post_create_league(
+    State(state): State<AppState>,
+    Form(input): Form<CreateLeagueInput>,
+) -> Result<Html<String>, LeagusError> {
+    if input.league_name.is_empty() {
+        return Err(LeagusError::Internal);
+    }
+
+    let league = League::new(&input.league_name, "");
+    let store = &state.store;
+    info!("Creating league; {:?}", &league);
+    store.create_league(league).await;
+
+    Ok(Html("League Created!".to_string()))
+}
+
+#[derive(Deserialize, Debug)]
+pub struct CreateLeagueInput {
+    #[serde(default)]
+    league_name: String,
 }
 
 /// Get the target season to display
