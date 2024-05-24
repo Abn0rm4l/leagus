@@ -13,7 +13,9 @@
         <div
           class="flex justify-between items-center py-3 px-4 border-b dark:border-gray-700"
         >
-          <h3 class="font-bold text-gray-800 dark:text-white">New Participant</h3>
+          <h3 class="font-bold text-gray-800 dark:text-white">
+            New Participant
+          </h3>
           <button
             type="button"
             class="flex justify-center items-center size-7 text-sm font-semibold rounded-full border border-transparent text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
@@ -52,26 +54,25 @@
             class="py-2.5 px-4 mb-2.5 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
             placeholder="Participant name"
           />
-          </div>
         </div>
-        <div
-          class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700"
+      </div>
+      <div
+        class="flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700"
+      >
+        <button
+          type="button"
+          class="py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+          _="on click trigger closeModal"
         >
-          <button
-            type="button"
-            class="py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            _="on click trigger closeModal"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-            _="on click trigger closeModal"
-          >
-            Create
-          </button>
-        </div>
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+          _="on click trigger closeModal"
+        >
+          Create
+        </button>
       </div>
     </div>
   </form>
