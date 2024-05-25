@@ -8,6 +8,7 @@
             <tr
               class="hover:bg-gray-100 dark:hover:bg-gray-700"
               hx-get="/{{ url_base }}/{{ item.id }}"
+              hx-push-url="true"
               hx-target="#content"
             >
               <td
