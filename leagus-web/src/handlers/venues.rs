@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::{
     errors::LeagusError,
     state::AppState,
-    templates::{CreateVenueTemplate, VenuesTemplate},
+    templates::{CreateVenueTemplate, VenuesListTemplate, VenuesTemplate},
 };
 
 /// Routes available for '/venues' path.
@@ -27,7 +27,7 @@ pub async fn get_create_venue() -> Result<Html<String>, LeagusError> {
     Ok(Html(CreateVenueTemplate {}.to_string()))
 }
 
-/// Post the form for createing new venue
+/// Post the form for creating new venue
 pub async fn post_create_venue(
     State(state): State<AppState>,
     Form(input): Form<CreateVenueInput>,
@@ -40,7 +40,13 @@ pub async fn post_create_venue(
     let store = &state.store;
     store.create_venue(&venue).await;
 
-    Ok(Html("venue Created!".to_string()))
+    Ok(Html(
+        VenuesListTemplate {
+            items: store.list_venues().await,
+            url_base: "venues".to_string(),
+        }
+        .to_string(),
+    ))
 }
 
 #[derive(Deserialize, Debug)]

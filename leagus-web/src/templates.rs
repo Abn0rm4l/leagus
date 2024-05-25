@@ -120,3 +120,17 @@ pub struct LeaguesListTemplate {
     pub items: Vec<League>,
     pub url_base: String,
 }
+
+#[derive(Template)]
+#[template(path = "partials/common/item_list.html")]
+pub struct ParticipantsListTemplate {
+    pub items: Vec<Participant>,
+    pub url_base: String,
+}
+
+#[derive(Template)]
+#[template(path = "partials/common/item_list.html")]
+pub struct VenuesListTemplate {
+    pub items: Vec<Venue>,
+    pub url_base: String,
+}

@@ -5,7 +5,7 @@ use serde::Deserialize;
 use crate::{
     errors::LeagusError,
     state::AppState,
-    templates::{CreateParticipantTemplate, ParticipantsTemplate},
+    templates::{CreateParticipantTemplate, ParticipantsListTemplate, ParticipantsTemplate},
 };
 
 /// Routes available for '/participants' path.
@@ -43,7 +43,13 @@ pub async fn post_create_participant(
     let store = &state.store;
     store.create_participant(&participant).await;
 
-    Ok(Html("Participant Created!".to_string()))
+    Ok(Html(
+        ParticipantsListTemplate {
+            items: store.list_participants(None).await,
+            url_base: "participants".to_string(),
+        }
+        .to_string(),
+    ))
 }
 
 #[derive(Deserialize, Debug)]
