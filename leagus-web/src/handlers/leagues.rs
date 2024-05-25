@@ -15,8 +15,8 @@ use tracing::{debug, info};
 use crate::errors::LeagusError;
 use crate::state::AppState;
 use crate::templates::{
-    LeagueContentTemplate, LeagueTemplate, LeaguesFullTemplate, PointsTableTemplate,
-    SeasonsForLeagueTemplate, SessionTemplate,
+    LeagueContentTemplate, LeagueTemplate, LeaguesFullTemplate, LeaguesListTemplate,
+    PointsTableTemplate, SeasonsForLeagueTemplate, SessionTemplate,
 };
 
 /// Routes available for '/leagues' path.
@@ -158,7 +158,15 @@ pub async fn post_create_league(
     info!("Creating league; {:?}", &league);
     store.create_league(league).await;
 
-    Ok(Html("League Created!".to_string()))
+    let leagues = store.list_leagues().await;
+
+    Ok(Html(
+        LeaguesListTemplate {
+            items: leagues,
+            url_base: "leagues".to_string(),
+        }
+        .to_string(),
+    ))
 }
 
 #[derive(Deserialize, Debug)]

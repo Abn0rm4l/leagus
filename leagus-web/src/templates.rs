@@ -113,3 +113,10 @@ pub struct VenuesTemplate {
 #[derive(Template)]
 #[template(path = "partials/venues/create_venue.html")]
 pub struct CreateVenueTemplate {}
+
+#[derive(Template)]
+#[template(path = "partials/common/item_list.html")]
+pub struct LeaguesListTemplate {
+    pub items: Vec<League>,
+    pub url_base: String,
+}

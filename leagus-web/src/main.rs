@@ -78,7 +78,6 @@ async fn main() {
 
 fn configure_tracing() {
     tracing_subscriber::registry()
-        // TODO: get the env filter working
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| {
                 // axum logs rejections from built-in extractors with the `axum::rejection`
