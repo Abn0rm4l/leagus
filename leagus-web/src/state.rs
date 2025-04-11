@@ -9,7 +9,9 @@ pub struct AppState {
 impl AppState {
     pub async fn new() -> AppState {
         AppState {
-            store: MongoStore::new().await.unwrap(),
+            store: MongoStore::new("mongodb://root:example@127.0.0.1:27017")
+                .await
+                .unwrap(),
         }
     }
 }

@@ -29,10 +29,8 @@ pub struct MongoStore {
 
 impl MongoStore {
     /// Create a new MongoDB-backed store.
-    pub async fn new() -> Result<MongoStore> {
-        let client_options =
-            ClientOptions::parse_async("mongodb://root:example@127.0.0.1:27017").await?;
-
+    pub async fn new(connection_string: &str) -> Result<MongoStore> {
+        let client_options = ClientOptions::parse_async(connection_string).await?;
         let client = Client::with_options(client_options);
 
         match client {
