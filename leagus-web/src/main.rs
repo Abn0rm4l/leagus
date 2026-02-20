@@ -1,5 +1,5 @@
 use axum::{extract::MatchedPath, http::Request, response::Response, Router};
-use handlers::{api, leagues, matches, participants, root, rounds, seasons, sessions, venues};
+use handlers::root;
 use state::AppState;
 use std::time::Duration;
 use tower_http::services::ServeDir;
@@ -10,7 +10,6 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
 mod errors;
 mod handlers;
 mod state;
-mod templates;
 
 #[tokio::main]
 async fn main() {
@@ -20,14 +19,6 @@ async fn main() {
 
     let app = Router::new()
         .nest("/", root::routes())
-        .nest("/api", api::routes())
-        .nest("/leagues", leagues::routes(state.clone()))
-        .nest("/seasons", seasons::routes(state.clone()))
-        .nest("/sessions", sessions::routes(state.clone()))
-        .nest("/matches", matches::routes())
-        .nest("/rounds", rounds::routes(state.clone()))
-        .nest("/venues", venues::routes(state.clone()))
-        .nest("/participants", participants::routes(state.clone()))
         .nest_service("/assets", ServeDir::new("assets"))
         // `TraceLayer` is provided by tower-http so you have to add that as a dependency.
         // It provides good defaults but is also very customizable.

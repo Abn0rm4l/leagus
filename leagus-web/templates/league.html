@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block header %}
-{% let selected = "Leagues" %}
-{% include "partials/navbar.html" %}
-{% endblock header %}
-{% block content %}
-{{ league_content_template|safe }}
-{% endblock %}
