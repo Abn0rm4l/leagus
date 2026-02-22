@@ -9,6 +9,7 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
 
 mod errors;
 mod handlers;
+mod models;
 mod state;
 
 #[tokio::main]
